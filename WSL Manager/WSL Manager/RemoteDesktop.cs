@@ -1,19 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Management.Automation;
-using System.Text.RegularExpressions;
 
 
 namespace WSL_Manager
@@ -25,6 +10,7 @@ namespace WSL_Manager
         /// terminal and use true to hide the terminal
         /// </summary>
         /// <param name="command"></param>
+        /// /// <param name="hide"></param>
         private static void User_Issued_Command(string command,bool hide)
         {
             //starts new process
@@ -47,7 +33,7 @@ namespace WSL_Manager
         }
 
         //THIS SHOULD PARTIALLY WORK
-        public static void InstallRDP(string distro)
+        public static void InstallRdp(string distro)
         {
             User_Issued_Command(CMDCommands.ShutDownAll, false);
             
@@ -62,14 +48,14 @@ namespace WSL_Manager
         }
 
         //THIS SHOULD WORK
-        public static void StartRDPConnection()
+        public static void StartRdpConnection()
         {
            
             User_Issued_Command("/k wsl " + CMDCommands.StartLinuxRDP,false);
             
         }
 
-        public static void LaunchRDPProgram()
+        public static void LaunchRdpProgram()
         {
             throw new Exception("THIS HAS NOT BEEN IMPLEMENTED YET");
         }
