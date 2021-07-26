@@ -21,6 +21,9 @@
     <Compile Update="ManageDistros.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Distro.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>
