@@ -40,7 +40,7 @@ namespace WSL_Manager
             //this is only the first half, the steps with nano have yet to be done.
             foreach (string command in CMDCommands.GuiInstall)
             {
-                User_Issued_Command("/k wsl " + command,false);    
+                //User_Issued_Command("/k wsl " + command,false);    
             }
             
             //TODO add in the parts with nano
@@ -51,7 +51,7 @@ namespace WSL_Manager
         public static void StartRdpConnection()
         {
            
-            User_Issued_Command("/k wsl " + CMDCommands.StartLinuxRDP,false);
+            //User_Issued_Command("/k wsl " + CMDCommands.StartLinuxRDP,false);
             
         }
 
