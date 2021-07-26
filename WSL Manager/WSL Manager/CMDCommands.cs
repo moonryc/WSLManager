@@ -2,18 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Management.Automation;
-using System.Text.RegularExpressions;
 
 
 namespace WSL_Manager
@@ -21,11 +9,12 @@ namespace WSL_Manager
         public static class CMDCommands
         {
                 private static string shutDownAll = "/c wsl.exe --shutdown";
-                private static string shutDownSpecificDistro = "/c wsl.exe -t ";
+                private static string shutDownSpecificDistro = "/c wsl -t ";
                 private static string startDistro = "/k wsl -d ";
                 private static string startLinuxRDP = "/k wsl sudo /etc/init.d/xrdp";
                 private static string listInstalledDistros = "/c wsl -l -v";
                 private static string runSpecificUser = " -u ";
+                private static string upgradeToWSL2 = "/k wsl --set-version ";
                 
                 #region GUI commands
 
@@ -53,8 +42,13 @@ namespace WSL_Manager
                 ///# xfce
                 ///startxfce4
                 /// </summary>
+
                 #endregion
-                
+
+                public static string UpgradeToWSL2
+                {
+                        get { return upgradeToWSL2; }
+                }
                 
                 public static string ShutDownAll
                 {
