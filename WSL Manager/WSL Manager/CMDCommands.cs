@@ -11,7 +11,9 @@ namespace WSL_Manager
                 private static string shutDownAll = "/c wsl.exe --shutdown";
                 private static string shutDownSpecificDistro = "/c wsl -t ";
                 private static string startDistro = "/k wsl -d ";
-                private static string startLinuxRDP = "/k wsl sudo /etc/init.d/xrdp";
+                
+                private static string startLinuxRDP = "-e sudo /etc/init.d/xrdp -d ";
+                
                 private static string listInstalledDistros = "/c wsl -l -v";
                 private static string runSpecificUser = " -u ";
                 private static string upgradeToWSL2 = "/k wsl --set-version ";
