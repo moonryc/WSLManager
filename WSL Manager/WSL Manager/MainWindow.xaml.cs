@@ -105,9 +105,17 @@ namespace WSL_Manager
         private void StartSelectedDistro(object sender, RoutedEventArgs e)
         {
             string distro = GetSelectedDistro();
-            string loginMethod = LogInMethod();
-            distros[distro].StartDistro(UserNameBox.Text);
-            
+            string loginMethod = GetSelectedLogInMethod();
+            if (loginMethod.Contains("Default"))
+            {
+                distros[distro].StartDistro("Default");    
+            }
+            else
+            {
+                distros[distro].StartDistro(UserNameBox.Text);
+            }
+
+
         }
 
         /// <summary>
