@@ -48,11 +48,9 @@ namespace WSL_Manager
         }
 
         //THIS SHOULD WORK
-        public static void StartRdpConnection()
+        public static void StartRdpConnection(string distro)
         {
-           
-            //User_Issued_Command("/k wsl " + CMDCommands.StartLinuxRDP,false);
-            
+            User_Issued_Command("/k wsl " + CMDCommands.StartLinuxRDP + distro,false);
         }
 
         public static void LaunchRdpProgram()
