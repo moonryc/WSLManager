@@ -47,6 +47,9 @@ namespace WSL_Manager
             });
         }
         
+        #endregion
+        
+        #region BUTTONS
         
         //TODO: INSTALL RDP
         /// <summary>
@@ -57,13 +60,11 @@ namespace WSL_Manager
         private void InstallRdp(object sender, RoutedEventArgs e)
         {
             string distro = GetSelectedDistro();
-            if (distro != "Select Distro")
+            if (!distro.Contains("Select"))
             {
                 RemoteDesktop.InstallRdp(distro);
             }
         }
-
-        
         
         //TODO: THIS WILL BE THE LAST THING THAT WILL BE WORKED ON
         /// <summary>
@@ -80,8 +81,6 @@ namespace WSL_Manager
                 RemoteDesktop.LaunchRdpProgram();
             }
         }
-
-        
         
         /// <summary>
         /// Button
@@ -132,6 +131,9 @@ namespace WSL_Manager
             distros[distro].EndDistro();
         }
         
+        #endregion
+        
+        #region DROPDOWN
         
         /// <summary>
         /// DropDown Menu
@@ -140,10 +142,8 @@ namespace WSL_Manager
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ListOfDistrosDropDown(object sender, EventArgs e)
+        private void ListOfDistrosSelectOnClick(object sender, EventArgs e)
         {
-            string selectedDistro = GetSelectedDistro();
-            
             ListOfDistros.Items.Clear();
 
             RefreshDistroList();
@@ -168,32 +168,16 @@ namespace WSL_Manager
                 {
                     distros.Add(distroNameTemp, new Distro(distroNameTemp,distroIsRunningTemp,distroVersionTemp));
                 }
-                
                 //add the item to the list
                 ListOfDistros.Items.Add(distroNameTemp + " " + distro[1]);
-
             }
-            
             //Set Selection in combo box to whatever the previous selection was
             ListOfDistros.Items.MoveCurrentToFirst();
-            //ListOfDistros.SelectedItem = selectedDistro;
-            if(!ListOfDistros.Text.Contains("Select")){
-                WhenToDisplayButtons(null,null);
-            }
-        }
-
-        /// <summary>
-        /// Dropdown menu
-        /// Runs when the user dropdown is clicked, enables and disabbles textboxes
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void LogInAs_ContextMenuClose(object sender, EventArgs e)
-        {
-            WhenToDisplayButtons(null,null);
         }
         
-        #region Helper Functions
+        #endregion
+
+        #region HELPER FUNCTIONS
 
         /// <summary>
         /// This disabled the GUI buttons should the Distro selected not be version 2
@@ -227,15 +211,17 @@ namespace WSL_Manager
         }
 
         /// <summary>
+        /// Get Login Choice
         /// Returns the selected method to login
         /// </summary>
         /// <returns></returns>
-        private string LogInMethod()
+        private string GetSelectedLogInMethod()
         {
             return LogInAs.SelectedItem.ToString();
         }
-        
+
         /// <summary>
+        /// Get Distro
         /// Returns the selected distro from the drop down and
         /// returns null if the placeholder is what is selected
         /// </summary>
@@ -246,23 +232,7 @@ namespace WSL_Manager
         }
 
         /// <summary>
-        /// returns the selected distros version number
-        /// </summary>
-        /// <returns></returns>
-        private int GetSelectedDistroVersionNumber()
-        {
-            string distro = GetSelectedDistro();
-            if (!distro.Contains("Select"))
-            {
-                return distros[distro].WSLVersion;
-            }
-            else
-            {
-                return 2;
-            }
-        }
-
-        /// <summary>
+        /// Update List of installed Distros and distro statuses
         /// Refreshes the distro list for new distros and changes to exiting distros
         /// </summary>
         private void RefreshDistroList()
