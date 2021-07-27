@@ -520,21 +520,9 @@ namespace WSL_Manager
         
         public MainWindow()
         {
-            InitializeComponent();
-            ListOfDistros.Items.Add("Select Distro");
-            LogInAs.Items.Add("Select LogIn");
-            LogInAs.Items.Add("Default");
-            LogInAs.Items.Add("User");
-            StartSelectedDistroButton.IsEnabled = false;
-            UpgradeDistroButton.IsEnabled = false;
-            StartSelectedDistroButton.IsEnabled = false;
-            ShutDownAllDistro.IsEnabled = false;
-            ShutDownSelectedDistro.IsEnabled = false;
-            LogInAs.IsEnabled = false;
-            
-            InstallGuiTools.IsEnabled = false;
-            OpenDistroGui.IsEnabled = false;
-            //LogInAs_ContextMenuClose(null,null);
+            InitializeComponent();           
+            UpdateFormsTimer();
+            AreDistrosRunningOnLaunch();
         }
 
 
