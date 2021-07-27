@@ -77,7 +77,7 @@ namespace WSL_Manager
             string distro = GetSelectedDistro();
             if (distro != "Select Distro")
             {
-                RemoteDesktop.StartRdpConnection();
+                RemoteDesktop.StartRdpConnection(distro);
                 RemoteDesktop.LaunchRdpProgram();
             }
         }
