@@ -236,7 +236,13 @@ namespace WSL_Manager
         /// <returns></returns>
         private string GetSelectedDistro()
         {
-            return ListOfDistros.SelectedItem.ToString().Split(" ")[0];
+            if (!ListOfDistros.SelectedItem.ToString().Contains("Selected")) { 
+                return ListOfDistros.SelectedItem.ToString().Split(" ")[0];
+            }
+            else
+            {
+                return ListOfDistros.SelectedItem.ToString();
+            }
         }
 
         /// <summary>
