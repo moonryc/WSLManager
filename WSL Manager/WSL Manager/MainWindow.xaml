@@ -3,41 +3,64 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WSL_Manager"
         mc:Ignorable="d"
-        Title="WSL Manager" Height="500" Width="621">
+        Title="WSL Manager" Height="500" Width="621" ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0*"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="0*" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <Label Content="Select Distro" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top" Width="77" Margin="203,10,0,0" RenderTransformOrigin="0.5,0.5"/>
-        <ComboBox x:Name="ListOfDistros" HorizontalAlignment="Center" Height="27" Margin="0,36,0,0" VerticalAlignment="Top" Width="215" IsSynchronizedWithCurrentItem="True" SelectedIndex="0" AutomationProperties.Name="" Grid.Column="1" DropDownOpened="ListOfDistrosSelectOnClick" >
-            <ComboBoxItem Content="Select Distro"/>
+        <Label Content="Select Distro" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="26"
+               VerticalAlignment="Top" Width="77" Margin="203,10,0,0" RenderTransformOrigin="0.5,0.5" />
+        <ComboBox x:Name="ListOfDistros" HorizontalAlignment="Center" Height="27" Margin="0,36,0,0"
+                  VerticalAlignment="Top" Width="215" IsSynchronizedWithCurrentItem="True" SelectedIndex="0"
+                  AutomationProperties.Name="" Grid.Column="1" DropDownOpened="ListOfDistrosSelectOnClick">
+            <ComboBoxItem Content="Select Distro" />
         </ComboBox>
 
 
-        <Label Content="Login as:" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top" Width="75" Margin="203,62,0,0" RenderTransformOrigin="0.5,0.5"/>
-        <ComboBox x:Name="LogInAs" HorizontalAlignment="Center" Height="27" Margin="0,88,0,0" VerticalAlignment="Top" Width="215" IsSynchronizedWithCurrentItem="True" SelectedIndex="0" AutomationProperties.Name="" Grid.Column="1" IsEnabled="False">
-            <ComboBoxItem Content="Select Login"/>
-            <ComboBoxItem Content="Default"/>
-            <ComboBoxItem Content="User"/>
+        <Label Content="Login as:" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top"
+               Width="75" Margin="203,62,0,0" RenderTransformOrigin="0.5,0.5" />
+        <ComboBox x:Name="LogInAs" HorizontalAlignment="Center" Height="27" Margin="0,88,0,0" VerticalAlignment="Top"
+                  Width="215" IsSynchronizedWithCurrentItem="True" SelectedIndex="0" AutomationProperties.Name=""
+                  Grid.Column="1" IsEnabled="False">
+            <ComboBoxItem Content="Select Login" />
+            <ComboBoxItem Content="Default" />
+            <ComboBoxItem Content="User" />
         </ComboBox>
 
 
-        <Label Content="Username:" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top" Width="77" Margin="202,115,0,0" RenderTransformOrigin="0.5,0.5"/>
-        <TextBox x:Name="UserNameBox" HorizontalAlignment="Center" Height="27" Margin="0,141,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="215" Grid.Column="1" IsEnabled="False"/>
+        <Label Content="Username:" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top"
+               Width="77" Margin="202,115,0,0" RenderTransformOrigin="0.5,0.5" />
+        <TextBox x:Name="UserNameBox" HorizontalAlignment="Center" Height="27" Margin="0,141,0,0" TextWrapping="Wrap"
+                 VerticalAlignment="Top" Width="215" Grid.Column="1" IsEnabled="False" />
 
-        <Button x:Name="UpgradeDistroButton" Content="Upgrade Distro To WSL2" HorizontalAlignment="Center" Height="27" VerticalAlignment="Top" Width="215" Click="UpgradeToWsl2" Margin="0,242,0,0" Grid.Column="1" IsEnabled="False"/>
-        <Button x:Name="InstallGuiTools" Content="Install GUI Tools" HorizontalAlignment="Center" Height="27" VerticalAlignment="Top" Width="215" Click="InstallRdp" Margin="0,285,0,0" Grid.Column="1" RenderTransformOrigin="1,0.5" IsEnabled="False"/>
-        <Button x:Name="OpenDistroGui" Content="Open Distro GUI" HorizontalAlignment="Center" Height="27" VerticalAlignment="Top" Width="215" Click="StartRdp" Margin="0,329,0,0" Grid.Column="1" IsEnabled="False"/>
+        <Button x:Name="SetDistroVersion" Content="Convert Distro Version" HorizontalAlignment="Left" Height="27"
+                VerticalAlignment="Top" Width="167" Click="UpgradeToWsl2" Margin="203,242,0,0" Grid.Column="1"
+                IsEnabled="False" />
+        <Button x:Name="InstallGuiTools" Content="Install GUI Tools" HorizontalAlignment="Center" Height="27"
+                VerticalAlignment="Top" Width="215" Click="InstallRdp" Margin="0,285,0,0" Grid.Column="1"
+                RenderTransformOrigin="1,0.5" IsEnabled="False" />
+        <Button x:Name="OpenDistroGui" Content="Open Distro GUI" HorizontalAlignment="Center" Height="27"
+                VerticalAlignment="Top" Width="215" Click="StartRdp" Margin="0,329,0,0" Grid.Column="1"
+                IsEnabled="False" />
 
-        <Button x:Name="ShutDownSelectedDistro" Content="Shut Down Selected Distro" HorizontalAlignment="Center" Height="27" Margin="0,372,0,0" VerticalAlignment="Top" Width="215" Click="ShutDownSpecificDistro" Grid.Column="1" IsEnabled="False"/>
-        <Button x:Name="ShutDownAllDistro" Content="Shut Down All Distros" Grid.Column="1" HorizontalAlignment="Center" Height="27" Margin="0,413,0,0" VerticalAlignment="Top" Width="215" Click="ShutdownAllDistros" RenderTransformOrigin="1,1" IsEnabled="False"/>
-        <Button x:Name="StartSelectedDistroButton" Content="Start Selected Distro" HorizontalAlignment="Center" Height="27" VerticalAlignment="Top" Width="215" Click="StartSelectedDistro" Margin="0,196,0,0" Grid.Column="1" IsEnabled="False"/>
-
-
+        <Button x:Name="ShutDownSelectedDistro" Content="Shut Down Selected Distro" HorizontalAlignment="Center"
+                Height="27" Margin="0,372,0,0" VerticalAlignment="Top" Width="215" Click="ShutDownSpecificDistro"
+                Grid.Column="1" IsEnabled="False" />
+        <Button x:Name="ShutDownAllDistro" Content="Shut Down All Distros" Grid.Column="1" HorizontalAlignment="Center"
+                Height="27" Margin="0,413,0,0" VerticalAlignment="Top" Width="215" Click="ShutdownAllDistros"
+                RenderTransformOrigin="1,1" IsEnabled="False" />
+        <Button x:Name="StartSelectedDistroButton" Content="Start Selected Distro" HorizontalAlignment="Center"
+                Height="27" VerticalAlignment="Top" Width="215" Click="StartSelectedDistro" Margin="0,196,0,0"
+                Grid.Column="1" IsEnabled="False" />
+        <ComboBox x:Name="DistroVersionSelect" HorizontalAlignment="Left" Height="27" Margin="379,242,0,0"
+                  VerticalAlignment="Top" Width="39" IsSynchronizedWithCurrentItem="True" SelectedIndex="0"
+                  AutomationProperties.Name="" Grid.Column="1" IsEnabled="False">
+            <ComboBoxItem Content="1" />
+            <ComboBoxItem Content="2" />
+        </ComboBox>
 
 
     </Grid>
