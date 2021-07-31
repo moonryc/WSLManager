@@ -1,19 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Management.Automation;
-
+using System.Diagnostics;
 
 namespace WSL_Manager
 {
-
     public class Distro
     {
         private bool isRunning = false;
         private int version = 0;
         private string distroName = "";
-        System.Diagnostics.Process process = new System.Diagnostics.Process();
+        Process process = new Process();
         
         
         public Distro(string distroName, bool isRunning,int version)
@@ -23,60 +17,45 @@ namespace WSL_Manager
             this.distroName = distroName;
         }
 
-        public bool IsRunning
-        {
-            get { return isRunning; }
-            set { isRunning = value; }
-        }
-        
-        public int WSLVersion
-        {
-            get { return version; }
-            set { version = value; }
-        }
+        public bool IsRunning { get; set; }
+
+        public int WSLVersion { get; set; }
+
+
+        public string DistroName { get; } = "";
+
+        public int Version => WSLVersion;
 
         public void StartDistro(string user)
         {
             //picks the application to run
             process.StartInfo.FileName = "cmd.exe";
-            
+
             if (user == "Default")
             {
                 // takes an argument          
-                process.StartInfo.Arguments = CMDCommands.StartDistro + distroName;    
+                process.StartInfo.Arguments = $"{CMDCommands.StartDistro} {DistroName}";
             }
             else
             {
                 // takes an argument          
-                string command = CMDCommands.StartDistro + distroName + CMDCommands.RunSpecificUser + user;
+                string command = $"{CMDCommands.StartDistro} {DistroName} {CMDCommands.RunSpecificUser} {user}";
                 process.StartInfo.Arguments = command;
             }
-            
-    
+
+
             // runs the program
             process.Start();
         }
-        
+
         public void EndDistro()
         {
-            System.Diagnostics.Process quit = new System.Diagnostics.Process();
+            Process quit = new Process();
             quit.StartInfo.FileName = "cmd.exe";
             quit.StartInfo.CreateNoWindow = true;
-            quit.StartInfo.Arguments = CMDCommands.ShutDownSpecificDistro + distroName;
-            quit.Start();    
+            quit.StartInfo.Arguments = $"{CMDCommands.ShutDownSpecificDistro} {DistroName}";
+            quit.Start();
             process.Kill();
         }
-        
-        
-        public string DistroName
-        {
-            get { return distroName; }
-        }
-
-        public int Version
-        {
-            get { return version; }
-        }
-        
     }
 }
