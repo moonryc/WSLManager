@@ -1,6 +1,7 @@
 <h1>WSL Manager</h1>
 <h2>Table Of Contents</h2>
 <h3>*Known Bugs</h3>
+<h3>*New Features</h3>
 <h3>*How To Use</h3>
 <h3>*Upcoming Features</h3>
 <h2>--------------------------------------</h2>
@@ -8,6 +9,9 @@
 <ul>Currently at this time the following features do not work</ul>
 <ul>Install GUI Tools does not work properly yet, and is permenatly greyed out until the feature is fully implemented</ul>
 <ul>Open Distro GUI currently is non functional, and is permenatly greyed out until the feature is fully implemented</ul>
+<h2>--------------------------------------</h2>
+<h3>New Features:</h3>
+<ul >Upgrade and Downgrade distros easily using the drop down next to the Convert Distro button to select the version you would like to convert to. (Note: the button will grey out if your selected distro is already the version in which you selected</ul>
 <h2>--------------------------------------</h2>
 <h3>How To Use:</h3>
 <ul>Select the distro that you want to launch from the first drop down box (note program does not install WSL distros for you)</ul>
@@ -19,9 +23,9 @@
 <h2>--------------------------------------</h2>
 <h3>Upcoming Features:</h3>
 <ul>Install Gui packages required for opening the Linux distro in Remote Desktop</ul>
+<ul>Note significant progress has been made on the Install GUI packages tool. It is not 100% finished yet but It should be finished within the next week. I just want to push to the repository some of the progress that has been made before something tragic happens.</ul>
 <ul>Open Distro GUI, currently the button is non-functional</ul>
 <ul> Removing/uninstalling Distros</ul>
-<ul >Downgrading distros</ul>
 <ul>Possibly installing distros</ul>
 <h2>--------------------------------------</h2>
 
