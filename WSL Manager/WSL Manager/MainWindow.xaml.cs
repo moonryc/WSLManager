@@ -1,152 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Timers;
 using System.Windows;
 
-
-
 namespace WSL_Manager
 {
-
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        
-        List<string[]> _distroList = new List<string[]>();
-        private Dictionary<string, Distro> distros = new Dictionary<string, Distro>();
-        
-        private bool displayGuiTools = false;
-        
-        #region TIMER/UPDATE
-        
-        private System.Timers.Timer timer1;
-        private void UpdateFormsTimer()
-        {
-            double seconds = .1 *1000;
-            timer1 = new System.Timers.Timer(seconds);
-            timer1.Elapsed += UpdateFormsFunction;
-            timer1.AutoReset = true;
-            timer1.Enabled = true;
-        }
+        private List<string[]> _distroList = new List<string[]>();
 
         /// <summary>
-        /// Allows multithreading so that the timer can continuosly
-        /// check to make sure that the buttons and list of distros
-        /// are handled properly
+        ///     This is used for Debugging the GUI TOOLS
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="e"></param>
-        private void UpdateFormsFunction(Object source, ElapsedEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                EnableDisableButtons();
-                UpdateSelectedDistroField();
-            });
-        }
-        
-        #endregion
-        
-        #region BUTTONS
-        
-        //TODO: INSTALL RDP
-        /// <summary>
-        /// Button installs RDP in the selected distro
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void InstallRdp(object sender, RoutedEventArgs e)
-        {
-            string distro = GetSelectedDistro();
-            if (!distro.Contains("Select"))
-            {
-                RemoteDesktop.InstallRdp(distro);
-            }
-        }
-        
-        //TODO: THIS WILL BE THE LAST THING THAT WILL BE WORKED ON
-        /// <summary>
-        /// Button
-        /// This lets you now connect to the distro using RDP
-        /// </summary>
-        private void StartRdp(object sender, RoutedEventArgs e)
-        {
-            //Starts the selected Linux distro
-            string distro = GetSelectedDistro();
-            if (distro != "Select Distro")
-            {
-                RemoteDesktop.StartRdpConnection(distro);
-                RemoteDesktop.LaunchRdpProgram();
-            }
-        }
-        
-        /// <summary>
-        /// Button
-        /// Converts Distro to WSL2
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void UpgradeToWsl2(object sender, RoutedEventArgs e)
-        {
-            string distro = GetSelectedDistro();
-            distros[distro].EndDistro();
-            ManageDistros.ConvertWslToWslTwo(distro);
-        }
-        
-        /// <summary>
-        /// Button
-        /// Launches the selected distro only if the distro is not already running
-        /// Can Launch a specific distro with a specific user provided that the user exists
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void StartSelectedDistro(object sender, RoutedEventArgs e)
-        {
-            string distro = GetSelectedDistro();
-            string loginMethod = GetSelectedLogInMethod();
-            if (loginMethod.Contains("Default"))
-            {
-                distros[distro].StartDistro("Default");    
-            }
-            else
-            {
-                distros[distro].StartDistro(UserNameBox.Text);
-            }
+        private readonly bool EnableGUIButtons = false;
+        private readonly bool publish = true;
+
+        private readonly Dictionary<string, Distro> distros = new Dictionary<string, Distro>();
 
 
+        public MainWindow()
+        {
+            InitializeComponent();
+            UpdateFormsTimer();
+            AreDistrosRunningOnLaunch();
         }
 
-        /// <summary>
-        /// Button
-        /// Shuts down all of WSL
-        /// </summary>
-        private void ShutdownAllDistros(object sender, RoutedEventArgs e)
-        {
-            ManageDistros.ShutDownAllDistros();
-        }     
-        
-        /// <summary>
-        /// Button
-        /// Shuts down the distro listed in the drop down menu
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ShutDownSpecificDistro(object sender, RoutedEventArgs e)
-        {
-            string distro = GetSelectedDistro();
-            distros[distro].EndDistro();
-        }
-        
-        #endregion
-        
         #region DROPDOWN
-        
+
         /// <summary>
-        /// DropDown Menu
-        /// Dropdown Menu for Distros, runs on click
-        /// Select distro wanted for starting stopping, etc. updates the list on click
+        ///     DropDown Menu
+        ///     Dropdown Menu for Distros, runs on click
+        ///     Select distro wanted for starting stopping, etc. updates the list on click
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -164,7 +52,7 @@ namespace WSL_Manager
                 string distroNameTemp = distro[0];
                 bool distroIsRunningTemp = distro[1] == "Running";
                 int distroVersionTemp = int.Parse(distro[2]);
-                
+
                 //if distro is a repeat update it in case it has been altered
                 //this updates all distro objects
                 if (distros.ContainsKey(distroNameTemp))
@@ -174,53 +62,187 @@ namespace WSL_Manager
                 }
                 else
                 {
-                    distros.Add(distroNameTemp, new Distro(distroNameTemp,distroIsRunningTemp,distroVersionTemp));
+                    distros.Add(distroNameTemp, new Distro(distroNameTemp, distroIsRunningTemp, distroVersionTemp));
                 }
+
                 //add the item to the list
                 ListOfDistros.Items.Add(distroNameTemp + " " + distro[1]);
             }
+
             //Set Selection in combo box to whatever the previous selection was
             ListOfDistros.Items.MoveCurrentToFirst();
         }
+
+        #endregion
+
+        #region TIMER/UPDATE
         
+        private System.Timers.Timer timer1;
+        private void UpdateFormsTimer()
+        {
+            double seconds = .1 *1000;
+            timer1 = new System.Timers.Timer(seconds);
+            timer1.Elapsed += UpdateFormsFunction;
+            timer1.AutoReset = true;
+            timer1.Enabled = true;
+        }
+
+        /// <summary>
+        ///     Allows multithreading so that the timer can continuosly
+        ///     check to make sure that the buttons and list of distros
+        ///     are handled properly
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        private void UpdateFormsFunction(Object source, ElapsedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                EnableDisableButtons();
+                UpdateSelectedDistroField();
+            });
+        }
+
+        #endregion
+
+        #region BUTTONS
+
+        //TODO: INSTALL RDP
+        /// <summary>
+        ///     Button installs RDP in the selected distro
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void InstallRdp(object sender, RoutedEventArgs e)
+        {
+            string distro = GetSelectedDistro();
+            if (!distro.Contains("Select"))
+            {
+                InstallerRDP guiInstaller = new InstallerRDP();
+                guiInstaller.Show();
+                this.Close();
+            }
+        }
+
+        //TODO: THIS WILL BE THE LAST THING THAT WILL BE WORKED ON
+        /// <summary>
+        ///     Button
+        ///     This lets you now connect to the distro using RDP
+        /// </summary>
+        private void StartRdp(object sender, RoutedEventArgs e)
+        {
+            //Starts the selected Linux distro
+            string distro = GetSelectedDistro();
+            if (distro != "Select Distro")
+            {
+                RemoteDesktop.StartRdpConnection(distro);
+                RemoteDesktop.LaunchRdpProgram();
+            }
+        }
+
+        /// <summary>
+        ///     Button
+        ///     Converts Distro to WSL2
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UpgradeToWsl2(object sender, RoutedEventArgs e)
+        {
+            string distro = GetSelectedDistro();
+            string version = DistroVersionSelect.SelectedItem.ToString()
+                .Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            ManageDistros.ConvertWslToWslTwo(distro, version);
+        }
+
+        /// <summary>
+        ///     Button
+        ///     Launches the selected distro only if the distro is not already running
+        ///     Can Launch a specific distro with a specific user provided that the user exists
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StartSelectedDistro(object sender, RoutedEventArgs e)
+        {
+            string distro = GetSelectedDistro();
+            string loginMethod = GetSelectedLogInMethod();
+            if (loginMethod.Contains("Default"))
+                distros[distro].StartDistro("Default");
+            else
+                distros[distro].StartDistro(UserNameBox.Text);
+        }
+
+        /// <summary>
+        ///     Button
+        ///     Shuts down all of WSL
+        /// </summary>
+        private void ShutdownAllDistros(object sender, RoutedEventArgs e)
+        {
+            ManageDistros.ShutDownAllDistros();
+        }
+
+        /// <summary>
+        ///     Button
+        ///     Shuts down the distro listed in the drop down menu
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ShutDownSpecificDistro(object sender, RoutedEventArgs e)
+        {
+            string distro = GetSelectedDistro();
+            distros[distro].EndDistro();
+        }
+
         #endregion
 
         #region HELPER FUNCTIONS
 
         /// <summary>
-        /// This disabled the GUI buttons should the Distro selected not be version 2
+        ///     This disabled the GUI buttons should the Distro selected not be version 2
         /// </summary>
         private void EnableDisableButtons()
         {
-            
             //Can Select Login Method
-            LogInAs.IsEnabled = canSelectLogin();
-         
+            LogInAs.IsEnabled = CanSelectLogin();
+
             //Can Type Username
-            UserNameBox.IsEnabled = canTypeUsername();
-            
+            UserNameBox.IsEnabled = CanTypeUsername();
+
             //Can Launch Selected Distro
-            StartSelectedDistroButton.IsEnabled = canLaunchDistro();
-            
+            StartSelectedDistroButton.IsEnabled = CanLaunchDistro();
+
             //Can Upgrade to WSL2
-            UpgradeDistroButton.IsEnabled = canUpgradeToWsl2();
-                
+            SetDistroVersion.IsEnabled = CanUpgradeToWsl2();
+
+            //Distro version select
+            DistroVersionSelect.IsEnabled = CanSelectVersion();
+
             //Can Install GUI TOOLS
-            InstallGuiTools.IsEnabled = displayGuiTools;//canInstallGuiTools();
-            
+            if (EnableGUIButtons)
+                InstallGuiTools.IsEnabled = EnableGUIButtons;
+            else if (!EnableGUIButtons && publish)
+                InstallGuiTools.IsEnabled = EnableGUIButtons;
+            else
+                InstallGuiTools.IsEnabled = CanInstallGuiTools();
+
+
             //Can Open Distro Gui
-            OpenDistroGui.IsEnabled = displayGuiTools;//canOpenDistroGUI();
-            
+            if (EnableGUIButtons)
+                OpenDistroGui.IsEnabled = EnableGUIButtons;
+            else if (!EnableGUIButtons && publish)
+                OpenDistroGui.IsEnabled = EnableGUIButtons;
+            else
+                OpenDistroGui.IsEnabled = CanOpenDistroGui();
+
             //Can Shut Down Selected Gui
-            ShutDownSelectedDistro.IsEnabled = canShutDownSelectedDistro();
-            
+            ShutDownSelectedDistro.IsEnabled = CanShutDownSelectedDistro();
+
             //Shut down all distros
-            ShutDownAllDistro.IsEnabled = isADistroRunning();
+            ShutDownAllDistro.IsEnabled = IsADistroRunning();
         }
 
         /// <summary>
-        /// Get Login Choice
-        /// Returns the selected method to login
+        ///     Get Login Choice
+        ///     Returns the selected method to login
         /// </summary>
         /// <returns></returns>
         private string GetSelectedLogInMethod()
@@ -229,9 +251,9 @@ namespace WSL_Manager
         }
 
         /// <summary>
-        /// Get Distro
-        /// Returns the selected distro from the drop down and
-        /// returns null if the placeholder is what is selected
+        ///     Get Distro
+        ///     Returns the selected distro from the drop down and
+        ///     returns null if the placeholder is what is selected
         /// </summary>
         /// <returns></returns>
         private string GetSelectedDistro()
@@ -246,16 +268,17 @@ namespace WSL_Manager
         }
 
         /// <summary>
-        /// Update List of installed Distros and distro statuses
-        /// Refreshes the distro list for new distros and changes to exiting distros
+        ///     Update List of installed Distros and distro statuses
+        ///     Refreshes the distro list for new distros and changes to exiting distros
         /// </summary>
         private void RefreshDistroList()
         {
             _distroList = new List<string[]>();
-            
+
             #region CMD create in command line
+
             //Create process
-            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            Process process = new Process();
             process.StartInfo.CreateNoWindow = true;
             //strCommand is path and file name of command to run
             process.StartInfo.FileName = "cmd.exe";
@@ -263,37 +286,33 @@ namespace WSL_Manager
             process.StartInfo.Arguments = CMDCommands.ListInstalledDistros;
             process.StartInfo.UseShellExecute = false;
             //Set output of program to be written to process output stream
-            process.StartInfo.RedirectStandardOutput = true;   
+            process.StartInfo.RedirectStandardOutput = true;
             //Start the process
             process.Start();
+
             #endregion
             
             string output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
             
-            
             //Remove unneded characters from output
             output = output.Replace("*", "").Replace("\0", "").Replace("\r", "");
-            while (output.Contains("  "))
-            {
-                output = output.Replace("  ", " ");
-            }
-            
+            while (output.Contains("  ")) output = output.Replace("  ", " ");
             
             //Add distro info to distroList
             string[] outputArray = output.Split("\n");
-            
+
             for (int line = 1; line < outputArray.Length - 1; line++)
             {
                 string[] modifiedLine = outputArray[line].Split(" ");
-                
-                _distroList.Add( new[] {modifiedLine[1], modifiedLine[2], modifiedLine[3]} );
+
+                _distroList.Add(new[] {modifiedLine[1], modifiedLine[2], modifiedLine[3]});
             }
         }
-        
+
         /// <summary>
-        /// Updates the selected Distro for when
-        /// its changing from running to not running or visa versa 
+        ///     Updates the selected Distro for when
+        ///     its changing from running to not running or visa versa
         /// </summary>
         private void UpdateSelectedDistroField()
         {
@@ -315,8 +334,9 @@ namespace WSL_Manager
                 }
             }
         }
+
         /// <summary>
-        /// THis runs at startup to ensure that distros launched prior to startup are closed
+        ///     THis runs at startup to ensure that distros launched prior to startup are closed
         /// </summary>
         private void AreDistrosRunningOnLaunch()
         {
@@ -332,30 +352,25 @@ namespace WSL_Manager
                              "\n" +
                              "Would You like to Force Close all distros and continue?";
             
-            if (isADistroRunning())
+            if (IsADistroRunning())
             {
                 if (MessageBox.Show(this, message, "ERROR", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                {
                     ManageDistros.ShutDownAllDistros();
-                }
                 else
-                {
-                    System.Environment.Exit(0);  
-                }
-                
+                    Environment.Exit(0);
             }
         }
-        
+
         #endregion
-        
+
         #region WHEN TO DISPLAY BUTTONS
-        
+
         /// <summary>
-        /// If a distro is running return true
-        /// This is used to control wether or not you should enable the shut all distros down button
+        ///     If a distro is running return true
+        ///     This is used to control wether or not you should enable the shut all distros down button
         /// </summary>
         /// <returns></returns>
-        private bool isADistroRunning()
+        private bool IsADistroRunning()
         {
             foreach (string[] distroProperties in _distroList)
             {
@@ -367,26 +382,26 @@ namespace WSL_Manager
             }
 
             return false;
-
         }
+
         /// <summary>
-        /// If a proper distro is selected return true
+        ///     If a proper distro is selected return true
         /// </summary>
         /// <returns></returns>
-        private bool canSelectLogin()
+        private bool CanSelectLogin()
         {
             if (ListOfDistros.SelectedItem.ToString().Contains("Select"))
             {
                 return false;
             }
-
             return true;
         }
+
         /// <summary>
-        /// If a proper login method and a proper distro are selected return true
+        ///     If a proper login method and a proper distro are selected return true
         /// </summary>
         /// <returns></returns>
-        private bool canLaunchDistro()
+        private bool CanLaunchDistro()
         {
             string distro = GetSelectedDistro();
             string logInStyle = GetSelectedLogInMethod();
@@ -406,109 +421,99 @@ namespace WSL_Manager
             
         }
         /// <summary>
-        /// Can use textbox to type name if User is selcted
+        ///     Can use textbox to type name if User is selcted
         /// </summary>
         /// <returns></returns>
-        private bool canTypeUsername()
+        private bool CanTypeUsername()
         {
             //If you want to login as a specific user
-            if (LogInAs.SelectedItem.ToString().Contains("User") && canSelectLogin())
-            {
+            if (LogInAs.SelectedItem.ToString().Contains("User") && CanSelectLogin())
                 return true;
-            }
-            else
-            {
-                return false;
-            }
+            return false;
         }
+
         /// <summary>
-        /// Checks if the selected distro is WSL2
-        /// if it is not version 2 it returns true
+        ///     Checks if the selected distro is WSL2
+        ///     if it is not version 2 it returns true
         /// </summary>
         /// <returns></returns>
-        private bool canUpgradeToWsl2()
+        private bool CanUpgradeToWsl2()
         {
-            if (canSelectLogin() && !canShutDownSelectedDistro())
+            if (CanSelectLogin() && !CanShutDownSelectedDistro())
             {
                 string distro = GetSelectedDistro();
                 foreach (string[] distroProperties in _distroList)
                 {
-                    bool isWSL2 = distroProperties[2].Contains("2");
-                    if (distro == distroProperties[0] && !isWSL2)
-                    {
-                        return true;
-                    }
+                    string version = DistroVersionSelect.SelectedItem.ToString()
+                        .Replace("System.Windows.Controls.ComboBoxItem: ", "");
+                    bool isSameVersion = distroProperties[2].Contains(version);
+                    if (distro == distroProperties[0] && !isSameVersion) return true;
                 }
             }
 
             return false;
         }
+
         /// <summary>
-        /// If distro is WSL2 return true
+        ///     Allows changes to distro version selection
         /// </summary>
         /// <returns></returns>
-        private bool canInstallGuiTools()
+        private bool CanSelectVersion()
         {
-            if (canSelectLogin() && canShutDownSelectedDistro())
+            if (CanSelectLogin() && !CanShutDownSelectedDistro()) return true;
+
+            return false;
+        }
+
+        /// <summary>
+        ///     If distro is WSL2 return true
+        /// </summary>
+        /// <returns></returns>
+        private bool CanInstallGuiTools()
+        {
+            if (CanSelectLogin() && CanShutDownSelectedDistro())
             {
                 string distro = GetSelectedDistro();
                 foreach (string[] distroProperties in _distroList)
                 {
-                    bool isWSL2 = distroProperties[2].Contains("2");
-                    if (distro == distroProperties[0] && isWSL2)
-                    {
-                        return true;
-                    }
+                    bool isWsl2 = distroProperties[2].Contains("2");
+                    if (distro == distroProperties[0] && isWsl2) return true;
                 }
             }
 
             return false;
         }
+
         /// <summary>
-        /// If distro is WSL2 return true
+        ///     If distro is WSL2 return true
         /// </summary>
         /// <returns></returns>
-        private bool canOpenDistroGUI()
+        private bool CanOpenDistroGui()
         {
-            if (canSelectLogin() && canShutDownSelectedDistro())
+            if (CanSelectLogin() && CanShutDownSelectedDistro())
             {
                 string distro = GetSelectedDistro();
                 foreach (string[] distroProperties in _distroList)
                 {
-                    bool isWSL2 = distroProperties[2].Contains("2");
-                    if (distro == distroProperties[0] && isWSL2)
-                    {
-                        return true;
-                    }
+                    var isWsl2 = distroProperties[2].Contains("2");
+                    if (distro == distroProperties[0] && isWsl2) return true;
                 }
             }
 
             return false;
         }
+
         /// <summary>
-        /// Returns true is selected distro displays running
+        ///     Returns true is selected distro displays running
         /// </summary>
         /// <returns></returns>
-        private bool canShutDownSelectedDistro()
+        private bool CanShutDownSelectedDistro()
         {
-            if (ListOfDistros.SelectedItem.ToString().Contains("Running"))
-            {
-                return true;
-            }
+            if (ListOfDistros.SelectedItem.ToString().Contains("Running")) return true;
 
             return false;
         }
-        
+
         #endregion
-        
-        
-        public MainWindow()
-        {
-            InitializeComponent();           
-            UpdateFormsTimer();
-            AreDistrosRunningOnLaunch();
-        }
-
-
     }
 }
