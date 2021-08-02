@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Management.Automation;
+using System.Text.RegularExpressions;
 
 namespace WSL_Manager
 {
@@ -10,29 +12,37 @@ namespace WSL_Manager
     public static class GuiInstallerCommands
     {
         private static readonly string fileName = "GUIInstallerScript";
-        private static readonly string tempFilePathLocation = Path.Combine(GetInstallLocation, fileName);
+        private static readonly string folderLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WSLInstaller");
+        private static readonly string fileLocation = Path.Combine(folderLocation, fileName);
+        
 
         private static readonly string[] bashCommandsToAppend =
         {
-            "!# /bin/bash ", "sudo apt update ", "sudo apt -y upgrade", "sudo apt-get purge xrdp",
-            "sudo apt install -y xrdp", "sudo apt install -y xfce4", "sudo apt install -y xfce4-goodies",
-            "sudo cp /etc/xrdp/xrdp.ini /etc/xrdp/xrdp.ini.bak", "sudo sed -i \"s/3389/3390/g\" /etc/xrdp/xrdp.ini",
+            "#!/bin/bash",
+            "sudo apt-get update",
+            "sudo apt -y upgrade",
+            "sudo apt-get purge xrdp",
+            "sudo apt install -y xrdp",
+            "sudo apt install -y xfce4",
+            "sudo apt install -y xfce4-goodies",
+            "sudo cp /etc/xrdp/xrdp.ini /etc/xrdp/xrdp.ini.bak",
+            "sudo sed -i \"s/3389/3390/g\" /etc/xrdp/xrdp.ini",
             "sudo sed -i \"s/max_bpp=32/#max_bpp=32\\nmax_bpp=128/g\" /etc/xrdp/xrdp.ini",
             "sudo sed -i \"s/xserverbpp=24/#xserverbpp=24\\nxserverbpp=128/g\" /etc/xrdp/xrdp.ini",
             "echo xfce4-session > ~/.xsession",
             "sudo su - && sudo echo -e \"# xfce\" >> /etc/xrdp/startwm.sh",
             "sudo su - && sudo echo -e \"startxfce\" >> /etc/xrdp/startwm.sh",
-            "exit"
+            "exit",
         };
 
         public static string GetInstallLocation { get; } =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WSLInstaller");
+            folderLocation;
 
 
         private static string[] CommandAction(string command, bool hide)
         {
             //starts new process
-            var process = new Process();
+            Process process = new Process();
             if (hide) process.StartInfo.CreateNoWindow = true;
             //picks the application to run
             process.StartInfo.FileName = "cmd.exe";
@@ -53,13 +63,12 @@ namespace WSL_Manager
                 process.StandardError.ReadToEnd().Replace("*", "").Replace("\0", "").Replace("\r", "")
             };
             process.WaitForExit();
-            for (var i = 0; i < returnText.Length; i++)
+            for (int i = 0; i < returnText.Length; i++)
                 while (returnText[i].Contains("  "))
                     returnText[i] = returnText[i].Replace("  ", " ");
             return returnText;
         }
-
-
+        
         /// <summary>
         ///     creates folder in C:\programs
         ///     full path is C:\programs\WSLInstaller
@@ -68,7 +77,7 @@ namespace WSL_Manager
         {
             try
             {
-                if (!File.Exists(GetInstallLocation))
+                if (!File.Exists(folderLocation))
                 {
                     Directory.CreateDirectory(GetInstallLocation);
                     return $"Folder created at {GetInstallLocation}";
@@ -87,17 +96,17 @@ namespace WSL_Manager
         /// </summary>
         public static string GenerateBashScriptTextFile()
         {
-            var returnString = "";
+            string returnString = "";
 
             //DELETE OLD SCRIPT
             try
             {
                 //remove existing file
-                if (File.Exists(tempFilePathLocation))
+                if (File.Exists(fileLocation))
                 {
-                    CommandAction($"/c del {tempFilePathLocation}", true);
+                    CommandAction($"/c del {fileLocation}", true);
                     returnString +=
-                        $"Removing old script file located in {tempFilePathLocation} to ensure latest version\n";
+                        $"Removing old script file located in {fileLocation} to ensure latest version\n";
                 }
             }
             catch (Exception e)
@@ -108,9 +117,9 @@ namespace WSL_Manager
             //create file
             try
             {
-                if (!File.Exists(tempFilePathLocation))
+                if (!File.Exists(fileLocation))
                 {
-                    using (var createFile = File.CreateText(tempFilePathLocation))
+                    using (StreamWriter createFile = File.CreateText(fileLocation))
                     {
                         returnString += "Creating new script file\n";
 
@@ -118,9 +127,9 @@ namespace WSL_Manager
                         try
                         {
                             returnString +=
-                                $"Adding the following commands to the file located at {tempFilePathLocation} before converting to batch script\n";
+                                $"Adding the following commands to the file located at {fileLocation} before converting to batch script\n";
                             //writes commands to file
-                            foreach (var command in bashCommandsToAppend)
+                            foreach (string command in bashCommandsToAppend)
                             {
                                 createFile.WriteLine(command);
                                 returnString += command + '\n';
@@ -151,19 +160,19 @@ namespace WSL_Manager
         /// <exception cref="Exception"></exception>
         public static string RemoveOutDatedFolderAndFilesOnDistro(string selectedDistro)
         {
-            var returnString = "";
+            string returnString = "";
 
-            var testToRemoveExistingScriptInDistro =
+            string testToRemoveExistingScriptInDistro =
                 $"/c wsl -d {selectedDistro} -e test -f /tmp/WSLInstaller/GUIInstallerScript && echo \"CONTAINS OLD VERSION\"";
-            var testToRemoveExistingMkDir =
+            string testToRemoveExistingMkDir =
                 $"/c wsl -d {selectedDistro} -e test -d /tmp/WSLInstaller && echo \"CONTAINS OLD VERSION\"";
-            var removeExistingScriptInDistro = $"/c wsl -d {selectedDistro} -e rm /tmp/WSLInstaller/GUIInstallerScript";
-            var removeExistingWSLInstallerDirectoryInDistro = $"/c wsl -d {selectedDistro} -e rm -r /tmp/WSLInstaller";
+            string removeExistingScriptInDistro = $"/c wsl -d {selectedDistro} -e -u - root rm /tmp/WSLInstaller/GUIInstallerScript";
+            string removeExistingWSLInstallerDirectoryInDistro = $"/c wsl -d -u root {selectedDistro} -e rm -r /tmp/WSLInstaller";
 
             try
             {
                 //Handels the of the Existing Script in the Distro
-                var outputTestRemove = CommandAction(testToRemoveExistingScriptInDistro, true);
+                string[] outputTestRemove = CommandAction(testToRemoveExistingScriptInDistro, true);
                 if (outputTestRemove[0].Contains("CONTAINS OLD VERSION") && outputTestRemove[1].Equals(""))
                 {
                     //Remove the existing file
@@ -176,11 +185,11 @@ namespace WSL_Manager
 
 
                 //Handels the Removal of the Existing WSLInstallerFolder in the Distro
-                var outputTestMkDirExists = CommandAction(testToRemoveExistingMkDir, true);
+                string[] outputTestMkDirExists = CommandAction(testToRemoveExistingMkDir, true);
                 if (outputTestMkDirExists[0].Contains("CONTAINS OLD VERSION") && outputTestMkDirExists[1].Equals(""))
                 {
                     //Remove Directory
-                    var outputRemoveMkdir = CommandAction(removeExistingWSLInstallerDirectoryInDistro, true);
+                    string[] outputRemoveMkdir = CommandAction(removeExistingWSLInstallerDirectoryInDistro, true);
                     if (!outputRemoveMkdir[1].Equals(""))
                         throw new Exception(outputRemoveMkdir[1]);
                     returnString += $"Removing outdated WSLInstaller directory in {selectedDistro}";
@@ -200,26 +209,26 @@ namespace WSL_Manager
         /// </summary>
         public static string MoveTxtToWsl(string selectedDistro)
         {
-            var returnString = "";
-            var scriptDestination = "/temp";
-            var linuxFilePathLocation = tempFilePathLocation.Replace(@"\", "/").Replace("C:", "/mnt/c");
-            var mkdirToMoveTo = $"/c wsl -d {selectedDistro} -e mkdir /tmp/WSLInstaller";
-            var moveCommand = $"/c wsl -d {selectedDistro} -e cp {linuxFilePathLocation} {scriptDestination}";
+            string returnString = "";
+            string scriptDestination = "/tmp";
+            string linuxFilePathLocation = folderLocation.Replace(@"\", "/").Replace("C:", "/mnt/c");
+            string mkdirToMoveTo = $"/c wsl -d {selectedDistro} -e mkdir /tmp/WSLInstaller";
+            string moveCommand = $"/c wsl -d {selectedDistro} -u root -e cp -R {linuxFilePathLocation} {scriptDestination}";
 
 
             try
             {
-                //Make directory to move to
-                var outputMkdir = CommandAction(mkdirToMoveTo, true);
-                if (!outputMkdir[1].Equals(""))
-                    throw new Exception(outputMkdir[1]);
-                returnString += $"Directory created in {selectedDistro} located under /temp/WSLInstaller";
+                // //Make directory to move to
+                // string[] outputMkdir = CommandAction(mkdirToMoveTo, true);
+                // if (!outputMkdir[1].Equals(""))
+                //     throw new Exception(outputMkdir[1]);
+                // returnString += $"Directory created in {selectedDistro} located under /temp/WSLInstaller";
 
                 //Moves the file
-                var outputMove = CommandAction(moveCommand, true);
+                string[] outputMove = CommandAction(moveCommand, true);
                 if (!outputMove[1].Equals(""))
                     throw new Exception(outputMove[1]);
-                returnString += $"Moved script to {scriptDestination} successfully";
+                returnString += $"Moved script to {folderLocation} successfully";
             }
             catch (Exception e)
             {
@@ -231,23 +240,31 @@ namespace WSL_Manager
 
         public static string ConvertToBatchShell(string selectedDistro)
         {
-            var convertToBatchShell =
-                CommandAction($"/c wsl -d {selectedDistro} -e mv {fileName} /{fileName}.sh", true);
+            string[] convertToBatchShell =
+                CommandAction($"/c wsl -d {selectedDistro} -u root -e mv /tmp/WSLInstaller/{fileName} /tmp/WSLInstaller/{fileName}.sh", true);
 
             if (!convertToBatchShell[1].Equals(""))
-                return convertToBatchShell[0];
-            throw new Exception("ERROR");
+                throw new Exception("ERROR CONVERTING FILE TO BATCH SCRIPT");
+            return "Converted file to batch script successfully";
         }
 
+        public static string CorrectingCarriageReturns(string selectedDistro)
+        {
+            string command = $"wsl -d {selectedDistro} -u root -e sed -i -e {Regex.Escape("\"s/\r") +"$" +Regex.Escape("//\"").Replace(" ", "")} /tmp/WSLInstaller/{fileName}.sh";
+            //string[] output = CommandAction(command, true);
+            
+            PowerShell.Create().AddScript(command).Invoke();
+            return "Correcting carriage returns to make file runnable";
+        }
+        
         public static string MakeRunnable(string selectedDistro)
         {
-            var makeRunnable = CommandAction($"/k wsl -d {selectedDistro} -e chmod +x /{fileName}.sh", false);
-
-            if (makeRunnable[1].Equals(""))
-                //TODO
-                return
-                    "makeRunnable[0]SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS";
-            throw new Exception(makeRunnable[1]);
+            string[] makeRunnable = CommandAction($"/c wsl -d {selectedDistro} -u root -e chmod +x /tmp/WSLInstaller/{fileName}.sh", true);
+            
+            if (!makeRunnable[1].Equals(""))
+                throw new Exception(makeRunnable[1]);
+            return $"The Script is now runnable by the distro using chmod +x /{fileName}.sh";
+            
         }
 
         /// <summary>
@@ -255,9 +272,9 @@ namespace WSL_Manager
         /// </summary>
         public static void RunScript(string selectedDistro)
         {
-            var runScript = new Process();
+            Process runScript = new Process();
             runScript.StartInfo.FileName = "cmd.exe";
-            runScript.StartInfo.Arguments = $"/k wsl -d {selectedDistro} -e ./{fileName}.sh";
+            runScript.StartInfo.Arguments = $"/k wsl -d {selectedDistro} -e sh /tmp/WSLInstaller/{fileName}.sh";
             runScript.Start();
         }
     }
