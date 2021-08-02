@@ -41,7 +41,7 @@ namespace WSL_Manager
         #region Dropdown distro select
         
         /// <summary>
-        /// Updates the List of Distros that are WSL2
+        ///     Updates the List of Distros that are WSL2
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
