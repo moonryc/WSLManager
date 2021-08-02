@@ -1,4 +1,8 @@
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Management.Automation;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -15,6 +19,7 @@ namespace WSL_Manager
         public InstallPage3()
         {
             InitializeComponent();
+            StartInstaller();
         }
 
 
@@ -22,278 +27,206 @@ namespace WSL_Manager
         ///     For letting the user knowing whats happening
         /// </summary>
         /// <param name="textToAdd"></param>
-        private void UpdateInstallerProgressText(string textToAdd)
+        private void NewBlockProgress(string textToAdd)
         {
-            progressText += "----------------------------------------------------------------------------------\n";
+            progressText += "-----------------------------------------------------------------------------------------------------\n";
             progressText += textToAdd + "\n";
             InstallerText.Text = progressText;
         }
 
-
-        /// <summary>
-        ///     CREATES FOLDER AND WORKS
-        /// </summary>
-        /// <exception cref="Exception"></exception>
-        private void GeneratingFolder()
+        private void SameBlockProgress(string textToAdd)
         {
-            try
-            {
-                string message = GuiInstallerCommands.GenerateWSLInstallerFolder();
-                UpdateInstallerProgressText(message);
-            }
-            catch (Exception e)
-            {
-                UpdateInstallerProgressText("ERROR SEE BELOW");
-                throw new Exception(e.Message);
-            }
-        }
-
-        /// <summary>
-        ///     CREATES THE SCRIPT AND WORKS
-        /// </summary>
-        /// <exception cref="Exception"></exception>
-        private void BashScript()
-        {
-            try
-            {
-                string messgage = GuiInstallerCommands.GenerateBashScriptTextFile();
-                UpdateInstallerProgressText(messgage);
-            }
-            catch (Exception e)
-            {
-                UpdateInstallerProgressText(
-                    $"ERROR: \n ERROR CREATING THE SCRIPT TO INSTALL IN {GuiInstallerCommands.GetInstallLocation}");
-                UpdateInstallerProgressText(e.Message);
-                throw new Exception("INSTALLATION COULD NOT CONTINUE TO TO THE ERRORS ABOVE");
-            }
-        }
-
-        private void RemoveOutdatedFromDistro()
-        {
-            try
-            {
-                var message = GuiInstallerCommands.RemoveOutDatedFolderAndFilesOnDistro(distro);
-                if (!message.Equals("")) UpdateInstallerProgressText(message);
-            }
-            catch (Exception e)
-            {
-                UpdateInstallerProgressText("ERROR SEE BELOW");
-                throw new Exception(e.Message);
-            }
-        }
-
-
-        private void MoveScript()
-        {
-            try
-            {
-                var message = GuiInstallerCommands.MoveTxtToWsl(distro);
-                UpdateInstallerProgressText(message);
-            }
-            catch (Exception e)
-            {
-                UpdateInstallerProgressText("ERROR SEE BELOW");
-                throw new Exception(e.Message);
-            }
-        }
-
-        private void ConvertScript()
-        {
-            try
-            {
-                string message = GuiInstallerCommands.ConvertToBatchShell(distro);
-                UpdateInstallerProgressText(message);
-            }
-            catch (Exception e)
-            {
-                UpdateInstallerProgressText("ERROR SEE BELOW");
-                UpdateInstallerProgressText(e.Message);
-                
-            }
-        }
-
-        private void CorrectCarriageReturns()
-        {
-            try
-            {
-                string message = GuiInstallerCommands.CorrectingCarriageReturns(distro);
-                UpdateInstallerProgressText(message);
-            }
-            catch (Exception e)
-            {
-                UpdateInstallerProgressText("ERROR SEE BELOW");
-                throw new Exception(e.Message);
-            }
+            progressText += textToAdd + "\n";
+            InstallerText.Text = progressText;
         }
         
-        private void MakeScriptRunnable()
+        //TODO HAS ISSUES IN THIS METHOD REGARDING CLEANUP IN THE WSL FOLDER
+        /// <summary>
+        ///     creates folder in C:\programs
+        ///     full path is C:\programs\WSLInstaller
+        /// </summary>
+        public string GenerateWSLInstallerFolder()
         {
-            try
+            //First windows cleanup
+            string returnString = "";
+            if (Directory.Exists(GuiInstallerCommands.windowsFolderLocation))
             {
-                var message = GuiInstallerCommands.MakeRunnable(distro);
-                UpdateInstallerProgressText(message);
+                returnString+= $"Removing outdated GUIInstaller folders at {GuiInstallerCommands.windowsFolderLocation} \n";
+                PowerShell.Create().AddScript(GuiInstallerCommands.removeFolderFromWindowsFull).Invoke();
             }
-            catch (Exception e)
+            returnString += $"Creating new folder at {GuiInstallerCommands.windowsFolderLocation}\n";
+            PowerShell.Create().AddScript(GuiInstallerCommands.makeNewFolderWindows).Invoke();
+            
+            
+            string testToRemoveExistingMkDir = $"/c wsl -d {distro} {GuiInstallerCommands.doesDistroHaveFolder}";
+            string removeExistingScriptInDistro = $"wsl -d {distro} {GuiInstallerCommands.removeFolderFromDistro}";
+            
+            //Handels the of the Existing Script in the Distro
+            string[] outputTestRemove = GuiInstallerCommands.CommandAction(testToRemoveExistingMkDir, true);
+            if (outputTestRemove[0].Contains("CONTAINS OLD VERSION") && outputTestRemove[1].Equals(""))
             {
-                UpdateInstallerProgressText("ERROR SEE BELOW");
-                throw new Exception(e.Message);
+                //TODO THIS POWERSHELL COMMAND DOES NOT WORK PROPERLY
+                PowerShell.Create().AddCommand(removeExistingScriptInDistro);
+                returnString += $"Removing outdated batch WSLInstaller Folder located in {distro}";
             }
+            return returnString;
         }
 
-        private void RunTheScript()
+        
+        /// <summary>
+        ///     Creates the text file which will store the script
+        /// </summary>
+        public string GenerateBashScriptTextFile()
         {
-            try
+            string returnString = "";
+            //create file
+            if (!File.Exists(GuiInstallerCommands.windowsFileLocation))
             {
-                GuiInstallerCommands.RunScript(distro);
-                UpdateInstallerProgressText(
-                    "INSTALLATION COMPLETE\n PRESS THE \"LAUNCH GUI\" BUTTON TO OPEN THE GUI VERSION OF LINUX");
+                using (StreamWriter createFile = File.CreateText(GuiInstallerCommands.windowsFileLocation))
+                {
+                    returnString += "Creating new script file\n";
+                    returnString += $"Adding the following commands to the file located at {GuiInstallerCommands.windowsFileLocation} before converting to batch script\n";
+                    //writes commands to file
+                    foreach (string command in GuiInstallerCommands.bashCommandsToAppend) 
+                    {
+                        createFile.WriteLine(command); 
+                        returnString += $"Successfully added command:\n{command} to the script.\n";
+                    }
+                }
             }
-            catch (Exception e)
-            {
-                UpdateInstallerProgressText("ERROR SEE BELOW");
-                throw new Exception(e.Message);
-            }
+            return returnString;
         }
+        
+        
+        /// <summary>
+        /// Moves the script to the /tmp/WSLInstaller/GUIInstaller
+        /// </summary>
+        /// <param name="selectedDistro"></param>
+        /// <returns></returns>
+        public string MoveScriptToWsl()
+        {
+            string command = $"wsl -d {distro} {GuiInstallerCommands.moveCommand}";
+            PowerShell.Create().AddScript(command).Invoke();
+            return $"Moved script to {distro} to folder {GuiInstallerCommands.LinuxScriptFolderLocation} successfully"; 
+        }
+        
+        /// <summary>
+        /// Corrects the carrige returns in the script to make it runabble
+        /// </summary>
+        /// <param name="selectedDistro">enter the distro in which the script file exists</param>
+        /// <returns></returns>
+        public string CorrectingCarriageReturns()
+        {
+            string command = $"wsl -d {distro} {GuiInstallerCommands.carrigeReturn}";
+            PowerShell.Create().AddScript(command).Invoke();
+            return "Correcting carriage returns to make file runnable";
+        }
+        
+        /// <summary>
+        /// Converts the file to .sh
+        /// </summary>
+        /// <param name="selectedDistro"></param>
+        /// <returns></returns>
+        public string ConvertToBatchShell()
+        {
+            string command = $"wsl -d {distro} {GuiInstallerCommands.ConvertToBatchShell}";
+            PowerShell.Create().AddScript(command).Invoke();
+            return "Converted file to batch script successfully";
+        }
+        
+        #region NOTWORKING
+        
+        
+        //TODO MAKE THIS WORK
+        /// <summary>
+        ///     Makes it so that the script can be excecuted
+        /// </summary>
+        /// <param name="selectedDistro"></param>
+        /// <returns></returns>
+        public string MakeRunnable()
+        {
+            string command = $"wsl -d {distro} {GuiInstallerCommands.makeRunnable}";
 
+            PowerShell.Create().AddScript(command).Invoke();
+            return $"The Script is now runnable by the distro using {command}";
+        }
+        
+        //TODO FIX IT SO THAT THE SCRIPT AUTO RUNS
+        /// <summary>
+        ///     Runs the bash script in the distro
+        /// </summary>
+        public void RunScript()
+        {
+            string command = $"/k wsl -d {distro} {GuiInstallerCommands.runScript}";
 
+            //PowerShell.Create().AddScript(command).Invoke();
+            //GuiInstallerCommands.CommandAction(command, false);
+            Process runScript = new Process();
+            runScript.StartInfo.FileName = "cmd.exe";
+            runScript.StartInfo.Arguments = $"/k {command}";
+            runScript.StartInfo.UseShellExecute = false;
+            runScript.StartInfo.CreateNoWindow = false;
+            runScript.StartInfo.RedirectStandardOutput = false;
+            runScript.Start();
+            runScript.WaitForExit();
+        }
+        
+        #endregion
+        
+        /// <summary>
+        ///     Installs all methods
+        /// </summary>
         private void StartInstaller()
         {
             Dispatcher.Invoke(() =>
             {
                 int numberOfCommands = 8;
-                int loadingBarIncrease = 100 / numberOfCommands;
-                var timeToWait = 0 * 1000;
-
-                
-
-                //Generating Folder
-                try
-                {
-                    GeneratingFolder();
-                    LoadingBar.Value += loadingBarIncrease;
-                }
-                catch (Exception e)
-                {
-                    UpdateInstallerProgressText(e.Message);
-                    UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
-                }
-                
-                //BashScript
-                try
-                {
-                    if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED"))
-                    {
-                        Thread.Sleep(timeToWait);
-                        BashScript();
-                        LoadingBar.Value += loadingBarIncrease;
-                    }
-                }
-                catch (Exception e)
-                {
-                    UpdateInstallerProgressText(e.Message);
-                    UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
-                }
-                
-                //RemoveOutdated From Distro
-                try
-                {
-                    if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED"))
-                    {
-                        Thread.Sleep(timeToWait);
-                        RemoveOutdatedFromDistro();
-                        LoadingBar.Value += loadingBarIncrease;
-                    }
-                }
-                catch (Exception e)
-                {
-                    UpdateInstallerProgressText(e.Message);
-                    UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
-                }
-                
-                //MoveScript
-                try
-                {
-                    if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED"))
-                    {
-                        Thread.Sleep(timeToWait);
-                        MoveScript();
-                        LoadingBar.Value += loadingBarIncrease;
-                    }
-                }
-                catch (Exception e)
-                {
-                    UpdateInstallerProgressText(e.Message);
-                    UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
-                }
-                
-                //ConvertScript
-                 try
-                 {
-                     if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED"))
-                     {
-                         Thread.Sleep(timeToWait);
-                         ConvertScript();
-                         LoadingBar.Value += loadingBarIncrease;
-                     }
-                 }
-                 catch (Exception e)
-                 {
-                     UpdateInstallerProgressText(e.Message);
-                     UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
-                 }
+                LoadingBar.Maximum = numberOfCommands;
+                int loadingBarIncrease = numberOfCommands / numberOfCommands;
+                //var timeToWait = 0 * 1000;
                 
                  
-                 
-                 //Correcting carrige returns
                  try 
                  { 
-                     if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED")) 
-                     {
-                         Thread.Sleep(timeToWait);
-                         CorrectCarriageReturns();
-                         LoadingBar.Value += loadingBarIncrease;
-                     }
-                 }
-                 catch (Exception e)
-                 {
-                     UpdateInstallerProgressText(e.Message);
-                     UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
-                 }
-                 
-                 //MakeScriptRunnable
-                 try 
-                 { 
-                     if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED")) 
-                     {
-                          Thread.Sleep(timeToWait);
-                          MakeScriptRunnable();
-                          LoadingBar.Value += loadingBarIncrease;
-                     }
-                 }
-                 catch (Exception e)
-                 {
-                      UpdateInstallerProgressText(e.Message);
-                      UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
-                 }
-                 
-                 
-                 //RunTheScript
-                 try
-                 {
-                     if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED"))
-                     {
-                         Thread.Sleep(timeToWait);
-                        RunTheScript();
-                        LoadingBar.Value += loadingBarIncrease;
-                     }
-                 }
-                 catch (Exception e)
-                 {
-                    UpdateInstallerProgressText(e.Message);
-                    UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
-                 }
-
+                     //Begining Installation
+                     SameBlockProgress("Begining Installation");
                 
+                     //Clearing ouf folder and making new ones
+                     NewBlockProgress(GenerateWSLInstallerFolder());
+                     LoadingBar.Value += loadingBarIncrease;
+                     
+                     //Creating bash file
+                     NewBlockProgress(GenerateBashScriptTextFile());
+                     LoadingBar.Value += loadingBarIncrease;
+                     
+                     //Moving Batch script to WSL 
+                     NewBlockProgress(MoveScriptToWsl());
+                     LoadingBar.Value += loadingBarIncrease;
+                     
+                     //Configuing batch file
+                     NewBlockProgress(CorrectingCarriageReturns());
+                     LoadingBar.Value += loadingBarIncrease;
+                     SameBlockProgress(ConvertToBatchShell());
+                     LoadingBar.Value += loadingBarIncrease;
+                     
+                     SameBlockProgress(MakeRunnable());
+                     LoadingBar.Value += loadingBarIncrease;
+                     
+                     
+                     
+                     //Running file
+                     NewBlockProgress("The script has been launched please monitor it and type in your password when applicable. Once the script has finished the installation will be complete");
+                     RunScript();
+                     LoadingBar.Value += loadingBarIncrease;
+                     NewBlockProgress("INSTALLATION COMPLETE\n PRESS THE \"LAUNCH GUI\" BUTTON TO OPEN THE GUI VERSION OF LINUX");
+                     LoadingBar.Value += loadingBarIncrease;
+                 }
+                 catch (Exception e)
+                 {
+                     NewBlockProgress("ERROR SEE BELOW");
+                     SameBlockProgress(e.Message);
+                     SameBlockProgress("INSTALLATION HAS BEEN HALTED");
+                 }
             });
         }
 
@@ -304,7 +237,7 @@ namespace WSL_Manager
             isKali = (bool) test[0];
             distro = (string) test[1];
             NavigationService.LoadCompleted -= NavigationService_LoadCompleted;
-            StartInstaller();
+            
         }
     }
 }
