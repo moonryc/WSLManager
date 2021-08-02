@@ -38,7 +38,7 @@ namespace WSL_Manager
         {
             try
             {
-                var message = GuiInstallerCommands.GenerateWSLInstallerFolder();
+                string message = GuiInstallerCommands.GenerateWSLInstallerFolder();
                 UpdateInstallerProgressText(message);
             }
             catch (Exception e)
@@ -56,7 +56,7 @@ namespace WSL_Manager
         {
             try
             {
-                var messgage = GuiInstallerCommands.GenerateBashScriptTextFile();
+                string messgage = GuiInstallerCommands.GenerateBashScriptTextFile();
                 UpdateInstallerProgressText(messgage);
             }
             catch (Exception e)
@@ -101,17 +101,31 @@ namespace WSL_Manager
         {
             try
             {
-                var message = GuiInstallerCommands.ConvertToBatchShell(distro);
+                string message = GuiInstallerCommands.ConvertToBatchShell(distro);
                 UpdateInstallerProgressText(message);
             }
             catch (Exception e)
             {
-                UpdateInstallerProgressText("FAILURE TO CONVERT SCRIPT INTO BATCH EXECUTABLE");
+                UpdateInstallerProgressText("ERROR SEE BELOW");
                 UpdateInstallerProgressText(e.Message);
-                throw new Exception("INSTALLATION COULD NOT CONTINUE TO TO THE ERRORS ABOVE");
+                
             }
         }
 
+        private void CorrectCarriageReturns()
+        {
+            try
+            {
+                string message = GuiInstallerCommands.CorrectingCarriageReturns(distro);
+                UpdateInstallerProgressText(message);
+            }
+            catch (Exception e)
+            {
+                UpdateInstallerProgressText("ERROR SEE BELOW");
+                throw new Exception(e.Message);
+            }
+        }
+        
         private void MakeScriptRunnable()
         {
             try
@@ -146,11 +160,11 @@ namespace WSL_Manager
         {
             Dispatcher.Invoke(() =>
             {
-                var numberOfCommands = 6;
-                double loadingBarIncrease = 100 % 6;
-                var timeToWait = 1 * 1000;
+                int numberOfCommands = 8;
+                int loadingBarIncrease = 100 / numberOfCommands;
+                var timeToWait = 0 * 1000;
 
-                #region CONFIRMED
+                
 
                 //Generating Folder
                 try
@@ -163,7 +177,7 @@ namespace WSL_Manager
                     UpdateInstallerProgressText(e.Message);
                     UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
                 }
-
+                
                 //BashScript
                 try
                 {
@@ -179,7 +193,7 @@ namespace WSL_Manager
                     UpdateInstallerProgressText(e.Message);
                     UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
                 }
-
+                
                 //RemoveOutdated From Distro
                 try
                 {
@@ -195,9 +209,7 @@ namespace WSL_Manager
                     UpdateInstallerProgressText(e.Message);
                     UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
                 }
-
-                #endregion
-
+                
                 //MoveScript
                 try
                 {
@@ -213,56 +225,75 @@ namespace WSL_Manager
                     UpdateInstallerProgressText(e.Message);
                     UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
                 }
-
-                #region NOT CONFIRMED YET
-
+                
                 //ConvertScript
-                // try
-                // {
-                //     if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED"))
-                //     {
-                //         Thread.Sleep(timeToWait);
-                //         ConvertScript();
-                //         LoadingBar.Value += loadingBarIncrease;
-                //     }
-                // }
-                // catch (Exception e)
-                // {
-                //     UpdateInstallerProgressText(e.Message);
-                //     UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
-                // }
-                //
-                // //MakeScriptRunnable
-                // try
-                // {
-                //     if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED"))
-                //     {
-                //         Thread.Sleep(timeToWait);
-                //         MakeScriptRunnable();
-                //         LoadingBar.Value += loadingBarIncrease;
-                //     }
-                // }
-                // catch (Exception e)
-                // {
-                //     UpdateInstallerProgressText(e.Message);
-                //     UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
-                // }
-                //
-                // //RunTheScript
-                // try
-                // {
-                //     if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED"))
-                //         Thread.Sleep(timeToWait);
-                //     RunTheScript();
-                //     LoadingBar.Value += loadingBarIncrease;
-                // }
-                // catch (Exception e)
-                // {
-                //     UpdateInstallerProgressText(e.Message);
-                //     UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
-                // }
+                 try
+                 {
+                     if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED"))
+                     {
+                         Thread.Sleep(timeToWait);
+                         ConvertScript();
+                         LoadingBar.Value += loadingBarIncrease;
+                     }
+                 }
+                 catch (Exception e)
+                 {
+                     UpdateInstallerProgressText(e.Message);
+                     UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
+                 }
+                
+                 
+                 
+                 //Correcting carrige returns
+                 try 
+                 { 
+                     if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED")) 
+                     {
+                         Thread.Sleep(timeToWait);
+                         CorrectCarriageReturns();
+                         LoadingBar.Value += loadingBarIncrease;
+                     }
+                 }
+                 catch (Exception e)
+                 {
+                     UpdateInstallerProgressText(e.Message);
+                     UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
+                 }
+                 
+                 //MakeScriptRunnable
+                 try 
+                 { 
+                     if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED")) 
+                     {
+                          Thread.Sleep(timeToWait);
+                          MakeScriptRunnable();
+                          LoadingBar.Value += loadingBarIncrease;
+                     }
+                 }
+                 catch (Exception e)
+                 {
+                      UpdateInstallerProgressText(e.Message);
+                      UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
+                 }
+                 
+                 
+                 //RunTheScript
+                 try
+                 {
+                     if (!InstallerText.Text.Contains("INSTALLATION HAS BEEN HALTED"))
+                     {
+                         Thread.Sleep(timeToWait);
+                        RunTheScript();
+                        LoadingBar.Value += loadingBarIncrease;
+                     }
+                 }
+                 catch (Exception e)
+                 {
+                    UpdateInstallerProgressText(e.Message);
+                    UpdateInstallerProgressText("INSTALLATION HAS BEEN HALTED");
+                 }
 
-                #endregion
+                
             });
         }
 
