@@ -16,7 +16,7 @@
         <ProgressBar x:Name="LoadingBar" HorizontalAlignment="Left" Height="34" Margin="32,390,0,0"
                      VerticalAlignment="Top" Width="521" />
         <ScrollViewer x:Name="ScrollViewerInstallerText" Margin="32,72,44,89">
-            <TextBlock x:Name="InstallerText" />
+            <TextBlock x:Name="InstallerText" TextWrapping="Wrap" />
         </ScrollViewer>
 
     </Grid>
