@@ -1,5 +1,4 @@
 using System;
-
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -9,7 +8,7 @@ using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using WSLManager.Core.Commands;
 
-namespace WSLManager.Core.ViewModels
+namespace WSLManager.Core.ViewModels.Installer
 {
     public class InstallPage3ViewModel:MvxViewModel<InstallPage3NavigationArgs>
     {
@@ -181,7 +180,7 @@ namespace WSLManager.Core.ViewModels
                     //writes commands to file
                     foreach (string command in InstallerCommands.bashCommandsToAppend)
                     {
-                        Thread.Sleep(400);
+                        Thread.Sleep(300);
                         createFile.WriteLine(command); 
                         SameBlockProgress($"Successfully added command: {command} to the script.");
                         ProgressBar = ProgressBar + 1;
@@ -209,7 +208,7 @@ namespace WSLManager.Core.ViewModels
         private void CorrectingCarriageReturns()
         {
             string command = $"/c wsl -d {Distro} {InstallerCommands.carrigeReturn}";
-            InstallerCommands.CommandAction(command,false);
+            InstallerCommands.CommandAction(command,true);
             SameBlockProgress("Correcting carriage returns to make file runnable");
             ProgressBar = ProgressBar + 1;
         }
