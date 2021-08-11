@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using MvvmCross.ViewModels;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
+using MvvmCross.ViewModels;
 using WSLManager.Core.Commands;
 using WSLManager.Core.Models;
 
-
-namespace WSLManager.Core.ViewModels
+namespace WSLManager.Core.ViewModels.Installer
 {
     public class InstallPage3NavigationArgs
     {

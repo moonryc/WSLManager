@@ -3,7 +3,7 @@ using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 
-namespace WSLManager.Core.ViewModels
+namespace WSLManager.Core.ViewModels.Installer
 {
     public class InstallPage1ViewModel:MvxViewModel
     {
