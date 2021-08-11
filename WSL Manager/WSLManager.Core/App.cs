@@ -13,7 +13,7 @@ namespace WSLManager.Core
                 .AsInterfaces()
                 .RegisterAsLazySingleton();
             
-            RegisterAppStart<InstallPage1ViewModel>();
+            RegisterAppStart<WSLManagerHomeViewModel>();
         }
     }
 }
