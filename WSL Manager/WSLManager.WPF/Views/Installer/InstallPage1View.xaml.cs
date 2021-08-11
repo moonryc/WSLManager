@@ -1,14 +1,12 @@
-using System.Windows.Controls;
 using MvvmCross.Platforms.Wpf.Presenters.Attributes;
 using MvvmCross.Platforms.Wpf.Views;
 
-
-namespace WSLManager.WPF.Views
+namespace WSLManager.WPF.Views.Installer
 {
     [MvxContentPresentation]
-    public partial class InstallPage2View : MvxWpfView
+    public partial class InstallPage1View : MvxWpfView
     {
-        public InstallPage2View()
+        public InstallPage1View()
         {
             InitializeComponent();
         }

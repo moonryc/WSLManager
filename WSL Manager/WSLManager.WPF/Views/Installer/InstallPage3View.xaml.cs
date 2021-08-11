@@ -1,8 +1,7 @@
-using System.Windows.Controls;
 using MvvmCross.Platforms.Wpf.Presenters.Attributes;
 using MvvmCross.Platforms.Wpf.Views;
 
-namespace WSLManager.WPF.Views
+namespace WSLManager.WPF.Views.Installer
 {
     [MvxContentPresentation]
     public partial class InstallPage3View : MvxWpfView
