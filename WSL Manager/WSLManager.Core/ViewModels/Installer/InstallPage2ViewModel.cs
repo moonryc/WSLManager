@@ -37,7 +37,7 @@ namespace WSLManager.Core.ViewModels.Installer
             set {
                 _selectedDistro = value; 
                 RaisePropertyChanged(()=> SelectedDistro);
-                if (_selectedDistro.DistroStatus == null)
+                if (_selectedDistro == null || _selectedDistro.DistroStatus == null)
                 {
                     Page3IsEnabledButton= false;
                 }
