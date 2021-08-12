@@ -15,6 +15,7 @@ namespace WSLManager.Core.ViewModels.Installer
 
         private readonly IMvxNavigationService _navigationService;
         public IMvxAsyncCommand NavPage2Command => new MvxAsyncCommand(NavPage2);
+        public IMvxAsyncCommand NavHomeCommand => new MvxAsyncCommand(NavHome);
 
         public InstallPage1ViewModel(IMvxNavigationService navigationService)
         {
@@ -23,6 +24,10 @@ namespace WSLManager.Core.ViewModels.Installer
         
         private async Task NavPage2(){
             await _navigationService.Navigate<InstallPage2ViewModel>();
+        }
+        
+        private async Task NavHome(){
+            await _navigationService.Navigate<WSLManagerHomeViewModel>();
         }
         
         
