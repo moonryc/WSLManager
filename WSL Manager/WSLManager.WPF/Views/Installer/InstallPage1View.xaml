@@ -20,6 +20,7 @@
             <RowDefinition Height="20" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
             <RowDefinition Height="40" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
@@ -32,13 +33,8 @@
             <Grid Grid.Column="0">
                 <TextBlock
                     x:Name="InfoTextBlock"
-                    Grid.Row="1"
-                    Grid.Column="2"
-                    Width="715"
-                    Height="325"
-                    Margin="0,30,0,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Top"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
                     FontSize="18"
                     FontWeight="Bold"
                     TextWrapping="Wrap">
@@ -51,14 +47,13 @@
                     <Run Text="If you would like to install the required packages and run the required configuration commands manually select the Guide Me Through Installation which will take you through a guide on what commands to run step by step." />
                     <LineBreak /><Run />
                 </TextBlock>
-
             </Grid>
 
 
         </Grid>
 
         <!--  Navigation Row  -->
-        <Grid Grid.Row="3" Grid.Column="1">
+        <Grid Grid.Row="4" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="20" />
                 <ColumnDefinition Width="*" />
@@ -69,7 +64,9 @@
                 <ColumnDefinition Width="20" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="1" Command="{Binding NavPageCancelCommand}">Cancel</Button>
+            <Button Grid.Column="1" Command="{Binding NavHomeCommand}">
+                Back
+            </Button>
             <Button Grid.Column="3" Command="{Binding NavPageGuideCommand}">Guide Me</Button>
             <Button Grid.Column="5" Command="{Binding NavPage2Command}">Continue</Button>
 
