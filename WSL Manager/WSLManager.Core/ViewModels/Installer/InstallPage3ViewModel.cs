@@ -102,8 +102,6 @@ namespace WSLManager.Core.ViewModels.Installer
             _installerDebugOutput += "-----------------------------------------------------------------------------------------------------\n";
             _installerDebugOutput += textToAdd + "\n";
             RaisePropertyChanged(() => InstallerDebugOutput);
-            //LogMessageModel NewBlock = new LogMessageModel() {DateTime = DateTime.Today, Message ="-----------------------------------------------------------------------------------------------------\n" + textToAdd+"\n"};
-            //OutPut.Add(NewBlock);
         }
 
         private void SameBlockProgress(string textToAdd)
@@ -114,10 +112,7 @@ namespace WSLManager.Core.ViewModels.Installer
         
         #endregion
         
-        
-        
-        
-         #region Installer Methods
+        #region Installer Methods
 
          /// <summary>
          /// Handles the removal of WSLInstaller folders on windows they exist before running the rest of the program
