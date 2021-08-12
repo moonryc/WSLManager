@@ -8,8 +8,6 @@
     mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
     Height="450" Width="800"
-    Title="WSLInstaller">
-    <Grid>
-
-    </Grid>
+    Title="WSLInstaller" ResizeMode="NoResize">
+    <Grid />
 </views1:MvxWindow>
