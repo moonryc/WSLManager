@@ -14,7 +14,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="0.5*" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
@@ -51,10 +51,12 @@
             <ComboBox
                 Grid.Row="2"
                 Grid.Column="1"
-                Width="152"
-                Height="30"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center" />
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                DisplayMemberPath="DistroListItem"
+                ItemsSource="{Binding DistroListComboBox}"
+                SelectedIndex="0"
+                SelectedItem="{Binding SelectedDistro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Label
                 Grid.Row="1"
                 Grid.Column="1"
@@ -70,18 +72,19 @@
             <ComboBox
                 Grid.Row="4"
                 Grid.Column="1"
-                Width="152"
-                Height="30"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center" />
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                IsEnabled="{Binding IsEnabledSelectUser}"
+                ItemsSource="{Binding UserListComboBox}"
+                SelectedIndex="0"
+                SelectedItem="{Binding SelectedUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBox
                 Grid.Row="6"
                 Grid.Column="1"
-                Width="152"
-                Height="30"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Bottom"
-                Text="TextBox"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                IsEnabled="{Binding IsEnabledUserName, UpdateSourceTrigger=PropertyChanged}"
+                Text="{Binding LoginUsername, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 TextWrapping="Wrap" />
             <Label
                 Grid.Row="5"
@@ -92,27 +95,27 @@
             <Button
                 Grid.Row="8"
                 Grid.Column="1"
-                Width="152"
-                Height="30"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Content="START SELECTED DISTRO" />
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Command="{Binding StartSelectedDistroCommand}"
+                Content="START SELECTED DISTRO"
+                IsEnabled="{Binding IsEnabledStartSelectedDistro}" />
             <Button
                 Grid.Row="10"
                 Grid.Column="1"
-                Width="152"
-                Height="30"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Content="CLOSE SELECTED DISTRO" />
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Command="{Binding CloseSelectedDistroCommand}"
+                Content="CLOSE SELECTED DISTRO"
+                IsEnabled="{Binding IsEnabledCloseSelectedDistro}" />
             <Button
                 Grid.Row="12"
                 Grid.Column="1"
-                Width="152"
-                Height="30"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Content="CLOSE ALL DISTROS" />
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Command="{Binding CloseAllDistroCommand}"
+                Content="CLOSE ALL DISTROS"
+                IsEnabled="{Binding IsEnabledCloseAllDistro}" />
 
 
         </Grid>
@@ -145,54 +148,54 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="40" />
             </Grid.RowDefinitions>
-
-            <Grid Grid.Row="2" Grid.Column="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="5" />
-                    <ColumnDefinition Width="40" />
-                </Grid.ColumnDefinitions>
-                <ComboBox
-                    Grid.Column="2"
-                    Width="40"
-                    Height="30"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    SelectedIndex="0">
-                    <ComboBoxItem Content="1" />
-                    <ComboBoxItem Content="2" />
-                </ComboBox>
-                <Button
-                    Width="107"
-                    Height="30"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Content="CHANGE WSL VER." />
-            </Grid>
             <Button
                 Grid.Row="4"
                 Grid.Column="1"
-                Width="152"
-                Height="30"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Content="INSTALL GUI TOOLS" />
+                Command="{Binding ChangeWslVersionCommand}"
+                Content="CHANGE WSL VER." />
+
             <Button
                 Grid.Row="6"
                 Grid.Column="1"
-                Width="152"
-                Height="30"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Content="OPEN DISTRO IN GUI" />
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Command="{Binding InstallGuiToolsCommand}"
+                Content="INSTALL GUI TOOLS" />
             <Button
                 Grid.Row="8"
                 Grid.Column="1"
-                Width="152"
-                Height="30"
-                HorizontalAlignment="Center"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Command="{Binding OpenDistroGuiCommand}"
+                Content="OPEN A DISTRO IN GUI"
+                IsEnabled="False" />
+            <Button
+                Grid.Row="10"
+                Grid.Column="1"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Command="{Binding ImportDistroCommand}"
+                Content="IMPORT A DISTRO" />
+            <Button
+                Grid.Row="12"
+                Grid.Column="1"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Command="{Binding UnregisterDistroCommand}"
+                Content="UNREGISTER A DISTRO" />
+            <Button
+                Grid.Row="2"
+                Grid.Column="1"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Command="{Binding AdvanceToolsHelpCommand}"
+                Content="ADVANCE TOOLS HELP" />
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Content="REMOVE DISTRO" />
+                Content="ADVANCE TOOLS" />
 
 
         </Grid>
