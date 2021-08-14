@@ -13,10 +13,16 @@ namespace WSLManager.Core.ViewModels.Installer
     {
         public string distro { get; set; }
         public bool isKali { get; set; }
+        public DistroInstanceBankNavigationArgs Bank { get; set; }
     }
     
-    public class InstallPage2ViewModel:MvxViewModel
+    public class InstallPage2ViewModel:MvxViewModel<DistroInstanceBankNavigationArgs>
     {
+        private Dictionary<string,DistroInstance> _bank;
+        public override void Prepare(DistroInstanceBankNavigationArgs parameter)
+        {
+            _bank = parameter.DistroDictionaryBank;
+        }
         
         #region Properties
         
@@ -116,12 +122,12 @@ namespace WSLManager.Core.ViewModels.Installer
         }
         
         private async Task NavPage1(){
-            await _navigationService.Navigate<InstallPage1ViewModel>();
+            await _navigationService.Navigate<InstallPage1ViewModel, DistroInstanceBankNavigationArgs>(new DistroInstanceBankNavigationArgs(_bank));
         }
         private async Task NavPage3(){
             
             await _navigationService.Navigate<InstallPage3ViewModel, InstallPage3NavigationArgs>(
-                new InstallPage3NavigationArgs {distro = SelectedDistro.DistroName, isKali = IsKali});
+                new InstallPage3NavigationArgs {distro = SelectedDistro.DistroName, isKali = IsKali, Bank = new DistroInstanceBankNavigationArgs(_bank)});
         }
         
     

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -7,12 +8,13 @@ using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using WSLManager.Core.Commands;
+using WSLManager.Core.Models;
 
 namespace WSLManager.Core.ViewModels.Installer
 {
     public class InstallPage3ViewModel:MvxViewModel<InstallPage3NavigationArgs>
     {
-        
+        private Dictionary<string, DistroInstance> _bank;
         
         #region Properties
         
@@ -80,6 +82,7 @@ namespace WSLManager.Core.ViewModels.Installer
         {
             Distro = parameter.distro;
             IsKali = parameter.isKali;
+            _bank = parameter.Bank.DistroDictionaryBank;
         }
 
         public override async Task Initialize()
@@ -310,15 +313,15 @@ namespace WSLManager.Core.ViewModels.Installer
         #region Navigation
         
         private readonly IMvxNavigationService _navigationService;
-        public IMvxAsyncCommand NavPage4Command => new MvxAsyncCommand(NavPage1);
+        public IMvxAsyncCommand NavPage4Command => new MvxAsyncCommand(NavPage4);
         
         public InstallPage3ViewModel(IMvxNavigationService navigationService)
         {
             _navigationService = navigationService;
         }
         
-        private async Task NavPage1(){
-            await _navigationService.Navigate<InstallPage4ViewModel>();
+        private async Task NavPage4(){
+            await _navigationService.Navigate<InstallPage4ViewModel, DistroInstanceBankNavigationArgs>(new DistroInstanceBankNavigationArgs(_bank));
         }
         
         #endregion
