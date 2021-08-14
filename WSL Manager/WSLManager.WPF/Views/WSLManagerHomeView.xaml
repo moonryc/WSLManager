@@ -54,8 +54,8 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 DisplayMemberPath="DistroListItem"
-                ItemsSource="{Binding DistroListComboBox}"
-                SelectedIndex="0"
+                ItemsSource="{Binding DistroListComboBox, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectedIndex="{Binding SelectedDistroIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedItem="{Binding SelectedDistro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Label
                 Grid.Row="1"
