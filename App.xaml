@@ -1,0 +1,35 @@
+﻿<Application x:Class="WSLManager.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WSLManager"
+             xmlns:ViewModels="clr-namespace:WSLManager.ViewModels"
+             xmlns:views1="clr-namespace:WSLManager.Views"
+             xmlns:installer="clr-namespace:WSLMAnager.Views.Installer"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+         <DataTemplate DataType="{x:Type ViewModels:DistroLaunchCloseViewModel}">
+             <views1:DistroLaunchCloseView/>
+         </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModels:ModifyDistroToolsViewModel}">
+            <views1:ModifyDistroToolsView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModels:ConvertWslVersionViewModel}">
+            <views1:ConvertWslVersionView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModels:InstallGuiViewModel}">
+            <views1:InstallGuiView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModels:GuiDistroLauncherViewModel}">
+            <installer:GuiDistroLauncherView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModels:ExportDistroViewModel}">
+            <views1:ExportDistroView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModels:ImportDistroViewModel}">
+            <views1:ImportDistroView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ViewModels:RemoveDistroViewModel}">
+            <views1:RemoveDistroView/>
+        </DataTemplate>
+    </Application.Resources>
+</Application>
