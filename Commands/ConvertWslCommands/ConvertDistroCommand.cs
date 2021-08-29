@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
 using WSLManager.Models;
-using WSLManager.ViewModels;
+using WSLManager.ViewModels.ModifyDistroTools;
 
 namespace WSLManager.Commands.ConvertWslCommands
 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 using WSLManager.ViewModels;
+using WSLManager.ViewModels.ModifyDistroTools;
 
 namespace WSLManager.Commands
 {
