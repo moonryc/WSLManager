@@ -1,33 +1,37 @@
-<h1>WSL Manager</h1>
-<h2>Table Of Contents</h2>
-<h3>*Known Bugs</h3>
-<h3>*New Features</h3>
-<h3>*How To Use</h3>
-<h3>*Upcoming Features</h3>
-<h2>--------------------------------------</h2>
-<h3>Know Bugs:</h3>
-<ul>Currently at this time the following features do not work</ul>
-<ul>Install GUI Tools does not work properly yet, and is permenatly greyed out until the feature is fully implemented</ul>
-<ul>Open Distro GUI currently is non functional, and is permenatly greyed out until the feature is fully implemented</ul>
-<h2>--------------------------------------</h2>
-<h3>New Features:</h3>
-<ul >Upgrade and Downgrade distros easily using the drop down next to the Convert Distro button to select the version you would like to convert to. (Note: the button will grey out if your selected distro is already the version in which you selected</ul>
-<h2>--------------------------------------</h2>
-<h3>How To Use:</h3>
-<ul>Select the distro that you want to launch from the first drop down box (note program does not install WSL distros for you)</ul>
-<ul>Select how you wish to login, if you select default it will login as whoever the default user is. If you select User put the desired username in and select Start Selected Distro (note you will recive and error if the user does not exist)</ul>
-<ul>When ready to terminate a particular distro select the distro you wish to terminate in the first drop down menu and select Shut Down Selected Distro</ul>
-<ul>If you wish to terminate all active WSL Distros click Shut Down All Distros</ul>
-<ul>Select Upgrade to WSL2 to convert your outdated distro to WSL2 (a requirment for future GUI use) (Note this can not be done while the distro is running)</ul>
-<ul>If the WSL2 button is greyed out then your distro is already on WSL2 or the distro is currently running</ul>
-<h2>--------------------------------------</h2>
-<h3>Upcoming Features:</h3>
-<ul>Install Gui packages required for opening the Linux distro in Remote Desktop</ul>
-<ul>Note significant progress has been made on the Install GUI packages tool. It is not 100% finished yet but It should be finished within the next week. I just want to push to the repository some of the progress that has been made before something tragic happens.</ul>
-<ul>Open Distro GUI, currently the button is non-functional</ul>
-<ul> Removing/uninstalling Distros</ul>
-<ul>Possibly installing distros</ul>
-<h2>--------------------------------------</h2>
+#WSL Manager
+
+###Table Of Contents</h2>
+
+####Known Bugs</h3>
+####New Features</h3>
+####How To Use</h3>
+####Upcoming Features</h3>
+
+
+### Know Bugs:
+* Currently at this time the following features do not work
+* Install GUI Tools does not work properly yet
+* Open Distro GUI currently is non functional
+* Loggin in using a specific user currently does not work
+* After launching the selected distro, the text in the drop down menu does not update properly but the buttons will.  
+
+###New Features:
+* Upgrade distros to WSL2 easily by using the Distro Tools
+
+###How To Use:
+* Select the distro that you want to launch from the first drop down box (note program does not install WSL distros for you)
+* Select how you wish to login, if you select default it will login as whoever the default user is. If you select User put the desired username in and select Start Selected Distro (note you will recive and error if the user does not exist)
+* When ready to terminate a particular distro select the distro you wish to terminate in the first drop down menu and select Shut Down Selected Distro
+* If you wish to terminate all active WSL Distros click Shut Down All Distros
+* Select Upgrade to WSL2 to convert your outdated distro to WSL2 (a requirment for future GUI use) (Note this can not be done while the distro is running)
+* If the WSL2 button is greyed out then your distro is already on WSL2 or the distro is currently running
+
+###Upcoming Features:
+* Install Gui packages required for opening the Linux distro in Remote Desktop
+* Note significant progress has been made on the Install GUI packages tool. It is not 100% finished yet but It should be finished within the next week. I just want to push to the repository some of the progress that has been made before something tragic happens.
+* Open Distro GUI, currently the button is non-functional
+* Removing/uninstalling Distros
+* Possibly installing distros
 
 
 
