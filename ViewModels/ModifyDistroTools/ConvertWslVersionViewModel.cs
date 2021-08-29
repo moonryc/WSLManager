@@ -3,7 +3,7 @@ using WSLManager.Commands;
 using WSLManager.Commands.ConvertWslCommands;
 using WSLManager.Models;
 
-namespace WSLManager.ViewModels
+namespace WSLManager.ViewModels.ModifyDistroTools
 {
     public class ConvertWslVersionViewModel: BaseViewModel
     {
