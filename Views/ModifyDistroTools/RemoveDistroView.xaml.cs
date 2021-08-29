@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace WSLManager.Views
+namespace WSLManager.Views.ModifyDistroTools
 {
     public partial class RemoveDistroView : UserControl
     {
