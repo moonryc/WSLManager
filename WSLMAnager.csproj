@@ -5,6 +5,8 @@
         <TargetFramework>net5.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <AssemblyName>WSLManager</AssemblyName>
+        <RootNamespace>WSLManager</RootNamespace>
     </PropertyGroup>
 
 </Project>
