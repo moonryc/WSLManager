@@ -9,4 +9,8 @@
         <RootNamespace>WSLManager</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Views\Installer" />
+    </ItemGroup>
+
 </Project>

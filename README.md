@@ -1,19 +1,24 @@
 #WSL Manager
 
+
+
+
 ###Table Of Contents</h2>
 
-####Known Bugs</h3>
-####New Features</h3>
-####How To Use</h3>
-####Upcoming Features</h3>
+#### <ul>Known Bugs
+#### <ul>New Features
+#### <ul>How To Use
+#### <ul>Upcoming Features
 
 
 ### Know Bugs:
+
 * Currently at this time the following features do not work
 * Install GUI Tools does not work properly yet
 * Open Distro GUI currently is non functional
-* Loggin in using a specific user currently does not work
+* Login in using a specific user currently does not work
 * After launching the selected distro, the text in the drop down menu does not update properly but the buttons will.  
+
 
 ###New Features:
 * Upgrade distros to WSL2 easily by using the Distro Tools
@@ -25,6 +30,14 @@
 * If you wish to terminate all active WSL Distros click Shut Down All Distros
 * Select Upgrade to WSL2 to convert your outdated distro to WSL2 (a requirment for future GUI use) (Note this can not be done while the distro is running)
 * If the WSL2 button is greyed out then your distro is already on WSL2 or the distro is currently running
+
+
+
+
+
+
+
+
 
 ###Upcoming Features:
 * Install Gui packages required for opening the Linux distro in Remote Desktop
