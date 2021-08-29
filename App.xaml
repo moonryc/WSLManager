@@ -14,23 +14,23 @@
         <DataTemplate DataType="{x:Type ViewModels:ModifyDistroToolsViewModel}">
             <views1:ModifyDistroToolsView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ViewModels:ConvertWslVersionViewModel}">
-            <views1:ConvertWslVersionView/>
+        <DataTemplate DataType="{x:Type ViewModels1:ConvertWslVersionViewModel}">
+            <modifyDistroTools:ConvertWslVersionView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ViewModels:InstallGuiViewModel}">
-            <views1:InstallGuiView/>
+        <DataTemplate DataType="{x:Type ViewModels1:InstallGuiViewModel}">
+            <modifyDistroTools:InstallGuiView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type ViewModels:GuiDistroLauncherViewModel}">
             <installer1:GuiDistroLauncherView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ViewModels:ExportDistroViewModel}">
-            <views1:ExportDistroView/>
+        <DataTemplate DataType="{x:Type ViewModels1:ExportDistroViewModel}">
+            <modifyDistroTools:ExportDistroView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ViewModels:ImportDistroViewModel}">
-            <views1:ImportDistroView/>
+        <DataTemplate DataType="{x:Type ViewModels1:ImportDistroViewModel}">
+            <modifyDistroTools:ImportDistroView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ViewModels:RemoveDistroViewModel}">
-            <views1:RemoveDistroView/>
+        <DataTemplate DataType="{x:Type ViewModels1:RemoveDistroViewModel}">
+            <modifyDistroTools:RemoveDistroView/>
         </DataTemplate>
     </Application.Resources>
 </Application>
