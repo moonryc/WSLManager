@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace WSLManager.Views.Installer
+namespace WSLManager.Views.ModifyDistroTools
 {
     public partial class GuiDistroLauncherView : UserControl
     {
