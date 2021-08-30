@@ -3,33 +3,47 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ViewModels="clr-namespace:WSLManager.ViewModels"
              xmlns:views1="clr-namespace:WSLManager.Views"
-             xmlns:modifyDistroTools="clr-namespace:WSLManager.Views.ModifyDistroTools"
-             xmlns:ViewModels1="clr-namespace:WSLManager.ViewModels.ModifyDistroTools"
+             xmlns:viewModels1="clr-namespace:WSLManager.ViewModels.ModifyDistroTools"
+             xmlns:mainWindow="clr-namespace:WSLManager.Views.MainWindow"
+             xmlns:modifyDistroTools1="clr-namespace:WSLManager.Views.MainWindow.ModifyDistroTools"
+             xmlns:installer="clr-namespace:WSLManager.Views.Installer"
+             xmlns:viewModels11="clr-namespace:WSLManager.ViewModels.Installer"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          <DataTemplate DataType="{x:Type ViewModels:DistroLaunchCloseViewModel}">
-             <views1:DistroLaunchCloseView/>
+             <mainWindow:DistroLaunchCloseView/>
          </DataTemplate>
         <DataTemplate DataType="{x:Type ViewModels:ModifyDistroToolsViewModel}">
-            <views1:ModifyDistroToolsView/>
+            <mainWindow:ModifyDistroToolsView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ViewModels1:ConvertWslVersionViewModel}">
-            <modifyDistroTools:ConvertWslVersionView/>
+        <DataTemplate DataType="{x:Type viewModels1:ConvertWslVersionViewModel}">
+            <modifyDistroTools1:ConvertWslVersionView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ViewModels1:InstallGuiViewModel}">
-            <modifyDistroTools:InstallGuiView/>
+        <DataTemplate DataType="{x:Type viewModels1:GuiDistroLauncherViewModel}">
+            <modifyDistroTools1:GuiDistroLauncherView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ViewModels1:GuiDistroLauncherViewModel}">
-            <modifyDistroTools:GuiDistroLauncherView/>
+        <DataTemplate DataType="{x:Type viewModels1:ExportDistroViewModel}">
+            <modifyDistroTools1:ExportDistroView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ViewModels1:ExportDistroViewModel}">
-            <modifyDistroTools:ExportDistroView/>
+        <DataTemplate DataType="{x:Type viewModels1:ImportDistroViewModel}">
+            <modifyDistroTools1:ImportDistroView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ViewModels1:ImportDistroViewModel}">
-            <modifyDistroTools:ImportDistroView/>
+        <DataTemplate DataType="{x:Type viewModels1:RemoveDistroViewModel}">
+            <modifyDistroTools1:RemoveDistroView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ViewModels1:RemoveDistroViewModel}">
-            <modifyDistroTools:RemoveDistroView/>
+        
+        
+        <DataTemplate DataType="{x:Type viewModels11:InstallerAutomatedSetupViewModel}">
+            <installer:InstallerAutomatedSetupView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels11:InstallerAutomatedViewModel}">
+            <installer:InstallerAutomatedView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels11:InstallerIntroViewModel}">
+            <installer:InstallerIntroView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels11:InstallerWalkthroughViewModel}">
+            <installer:InstallerWalkthroughView/>
         </DataTemplate>
     </Application.Resources>
 </Application>
