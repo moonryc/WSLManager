@@ -44,8 +44,6 @@ namespace WSLManager.ViewModels
         public MainWindowViewModel()
         {
             _baseViewModel = new DistroLaunchCloseViewModel(this);
-            
-            
             TimerBackgroundUpdate(2);
         }
 
