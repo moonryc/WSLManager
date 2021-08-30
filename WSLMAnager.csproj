@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Views\Installer" />
+      <Compile Remove="Logger\AnsiColorCodes.cs" />
     </ItemGroup>
 
 </Project>

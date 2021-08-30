@@ -3,7 +3,7 @@
 
 
 
-### Table Of Contents</h2>
+### Table Of Contents
 
 #### <ul>Known Bugs
 #### <ul>New Features

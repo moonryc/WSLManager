@@ -1,9 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using WSLManager.Models;
-using System.Windows;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Timers;
+using System.Windows;
+using WSLManager.Models;
 
 namespace WSLManager.ViewModels
 {
