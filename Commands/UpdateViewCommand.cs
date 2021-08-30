@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 using WSLManager.ViewModels;
+using WSLManager.ViewModels.Installer;
 using WSLManager.ViewModels.ModifyDistroTools;
 
 namespace WSLManager.Commands
@@ -42,9 +43,6 @@ namespace WSLManager.Commands
                 case "ConvertWsl":
                     _mainWindowViewModel.SelectedViewModel = new ConvertWslVersionViewModel(_mainWindowViewModel);
                     break;
-                case "InstallGUI":
-                    _mainWindowViewModel.SelectedViewModel = new InstallGuiViewModel(_mainWindowViewModel);
-                    break;
                 case "GUI":
                     _mainWindowViewModel.SelectedViewModel = new GuiDistroLauncherViewModel(_mainWindowViewModel);
                     break;
@@ -56,6 +54,15 @@ namespace WSLManager.Commands
                     break;
                 case "Remove":
                     _mainWindowViewModel.SelectedViewModel = new RemoveDistroViewModel(_mainWindowViewModel);
+                    break;
+                case "InstallerIntro":
+                    _mainWindowViewModel.SelectedViewModel = new InstallerIntroViewModel(_mainWindowViewModel);
+                    break;
+                case "Walkthrough":
+                    _mainWindowViewModel.SelectedViewModel = new InstallerWalkthroughViewModel(_mainWindowViewModel);
+                    break;
+                case "Automated":
+                    _mainWindowViewModel.SelectedViewModel = new InstallerAutomatedSetupViewModel(_mainWindowViewModel);
                     break;
                 default:
                     throw new Exception($"{parameter}");
