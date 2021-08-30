@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="WSLManager.Views.ModifyDistroToolsView"
+    x:Class="WSLManager.Views.MainWindow.ModifyDistroToolsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -43,8 +43,7 @@
             Grid.Row="5"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            Command="{Binding UpdateViewCommand}"
-            CommandParameter="InstallGUI"
+            Click="GuIButton_OnClick"
             Content="Install Gui Tools" />
         <Button
             Grid.Row="7"
