@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace WSLManager.Views
+namespace WSLManager.Views.MainWindow
 {
     public partial class DistroLaunchCloseView : UserControl
     {
