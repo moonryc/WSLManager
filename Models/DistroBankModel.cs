@@ -17,6 +17,7 @@ namespace WSLManager.Models
         public DistroBankModel()
         {
             _distroDictionary = new Dictionary<string, DistroModel>();
+            _distroDictionary.Add("Select Distro",new DistroModel("Select Distro",false,0));
             UpdateDictionary();
         }
         
@@ -42,6 +43,7 @@ namespace WSLManager.Models
 
             var output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
+            process.Kill();
 
 
             //Remove unneed characters from output
@@ -75,6 +77,8 @@ namespace WSLManager.Models
                 bool isRunning = distro[1].Equals("Running");
                 int wslVersion = Int32.Parse(distro[2]);
 
+                //if it already exits update the wsl number and if it is running
+                //else it is a brand new distro
                 if (_distroDictionary.ContainsKey(nameDistro))
                 {
                     _distroDictionary[nameDistro].IsRunning = isRunning;
