@@ -37,15 +37,16 @@
             Grid.Row="3"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            SelectedIndex="{Binding SelectedDistroIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            SelectedItem="{Binding SelectedDistroModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            SelectedIndex="{Binding DataContext.SelectedDistroIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=0,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type WSLManager:MainWindow}}}"
+            SelectedItem="{Binding DataContext.SelectedDistroModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type WSLManager:MainWindow}}}"
+            ItemsSource="{Binding DataContext.DistroCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type WSLManager:MainWindow}}}"
             DisplayMemberPath="DistroNameStatus"
-            ItemsSource="{Binding DataContext.DistroCollection, Mode=TwoWay,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type WSLManager:MainWindow}}}"/>
+            />
         <ComboBox
             Grid.Row="5"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            SelectedIndex="{Binding UserLoginType, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
+            SelectedIndex="{Binding UserLoginType, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged, FallbackValue=0}">
             <ComboBoxItem Content="Select Login Method" />
             <ComboBoxItem Content="Default User" />
             <ComboBoxItem Content="root" />
