@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Input;
 using WSLManager.ViewModels;
 
@@ -7,10 +8,12 @@ namespace WSLManager.Commands.DistroLaunchCloseCommands
     public class StopSelectedDistroCommand:ICommand
     {
         private DistroLaunchCloseViewModel _distroLaunchCloseViewModel; 
+        private MainWindowViewModel _mainWindowViewModel; 
             
-        public StopSelectedDistroCommand(DistroLaunchCloseViewModel viewModel)
+        public StopSelectedDistroCommand(DistroLaunchCloseViewModel viewModel, MainWindowViewModel mainWindowViewModel)
         {
             _distroLaunchCloseViewModel = viewModel;
+            _mainWindowViewModel = mainWindowViewModel;
         }
 
         #region ICommand
@@ -25,7 +28,7 @@ namespace WSLManager.Commands.DistroLaunchCloseCommands
         //Defines the method that determines whether the command can be executed in its current state
         public bool CanExecute(object parameter)
         {
-            if (_distroLaunchCloseViewModel.SelectedDistroModel != null && _distroLaunchCloseViewModel.SelectedDistroModel.IsRunning)
+            if (_mainWindowViewModel.SelectedDistroModel != null && _mainWindowViewModel.SelectedDistroModel.IsRunning)
             {
                 return true;    
             }
@@ -35,7 +38,12 @@ namespace WSLManager.Commands.DistroLaunchCloseCommands
         //Defines the method to be called when the command is invoked
         public void Execute(object parameter)
         {
-            _distroLaunchCloseViewModel.SelectedDistroModel.EndDistro();
+            Thread closeDistro = new Thread(() =>
+            {
+                _mainWindowViewModel.SelectedDistroModel.EndDistro();
+            });
+            closeDistro.Name = "Close Distro";
+            closeDistro.Start();
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Input;
 using WSLManager.Models;
 using WSLManager.ViewModels;
@@ -8,15 +9,17 @@ namespace WSLManager.Commands.DistroLaunchCloseCommands
     public class StartDistroCommand:ICommand
     {
         private DistroLaunchCloseViewModel _distroLaunchCloseViewModel;
+        private MainWindowViewModel _mainWindowViewModel;
 
         private bool distroName = false;
         bool isRunning = false;
         bool loginMethod = false;
         bool userName = false;
         
-        public StartDistroCommand( DistroLaunchCloseViewModel viewModel)
+        public StartDistroCommand( DistroLaunchCloseViewModel viewModel, MainWindowViewModel mainWindowViewModel)
         {
             _distroLaunchCloseViewModel = viewModel;
+            _mainWindowViewModel = mainWindowViewModel;
         }
 
         #region ICommand
@@ -31,11 +34,11 @@ namespace WSLManager.Commands.DistroLaunchCloseCommands
         //Defines the method that determines whether the command can be executed in its current state
         public bool CanExecute(object parameter)
         {
-            if (_distroLaunchCloseViewModel.SelectedDistroModel != null)
+            if (_mainWindowViewModel.SelectedDistroModel != null)
             {
-                isRunning = _distroLaunchCloseViewModel.SelectedDistroModel.IsRunning;
+                isRunning = _mainWindowViewModel.SelectedDistroModel.IsRunning;
                 
-                if (!_distroLaunchCloseViewModel.SelectedDistroModel.DistroNameStatus.Contains("Select") && _distroLaunchCloseViewModel.SelectedDistroModel.DistroNameStatus != null)
+                if (!_mainWindowViewModel.SelectedDistroModel.DistroNameStatus.Contains("Select") && _mainWindowViewModel.SelectedDistroModel.DistroNameStatus != null)
                 {
                     distroName = true;
                 }
@@ -73,21 +76,27 @@ namespace WSLManager.Commands.DistroLaunchCloseCommands
         //Defines the method to be called when the command is invoked
         public void Execute(object parameter)
         {
-            LoginOptions selectedLogin = (LoginOptions)_distroLaunchCloseViewModel.UserLoginType;
-            switch (selectedLogin)
+            Thread startDistro = new Thread(() =>
             {
-                case LoginOptions.root:
-                    _distroLaunchCloseViewModel.SelectedDistroModel.StartDistroUser("root");
-                    break;
-                case LoginOptions.DefaultUser:
-                    _distroLaunchCloseViewModel.SelectedDistroModel.StartDistro();
-                    break;
-                case LoginOptions.SpecificUser:
-                    _distroLaunchCloseViewModel.SelectedDistroModel.StartDistroUser(_distroLaunchCloseViewModel.UserName);
-                    break;
-                default:
-                    throw new Exception("NO A VALID LOGIN TYPE");
-            }
+                LoginOptions selectedLogin = (LoginOptions)_distroLaunchCloseViewModel.UserLoginType;
+                switch (selectedLogin)
+                {
+                    case LoginOptions.root:
+                        _mainWindowViewModel.SelectedDistroModel.StartDistroUser("root");
+                        break;
+                    case LoginOptions.DefaultUser:
+                        _mainWindowViewModel.SelectedDistroModel.StartDistro();
+                        break;
+                    case LoginOptions.SpecificUser:
+                        _mainWindowViewModel.SelectedDistroModel.StartDistroUser(_distroLaunchCloseViewModel
+                            .UserName);
+                        break;
+                    default:
+                        throw new Exception("NO A VALID LOGIN TYPE");
+                }
+            });
+            startDistro.Name = "Start Distro";
+            startDistro.Start();
         }
 
         #endregion

@@ -9,10 +9,12 @@ namespace WSLManager.Commands.DistroLaunchCloseCommands
     public class StopAllDistrosCommand:ICommand
     {
         private DistroLaunchCloseViewModel _distroLaunchCloseViewModel;
+        private MainWindowViewModel _mainWindowViewModel;
         
-        public StopAllDistrosCommand(DistroLaunchCloseViewModel viewModel)
+        public StopAllDistrosCommand(DistroLaunchCloseViewModel viewModel,MainWindowViewModel mainWindowViewModel)
         {
             _distroLaunchCloseViewModel = viewModel;
+            _mainWindowViewModel = mainWindowViewModel;
         }
 
 
@@ -28,7 +30,7 @@ namespace WSLManager.Commands.DistroLaunchCloseCommands
         //Defines the method that determines whether the command can be executed in its current state
         public bool CanExecute(object parameter)
         {
-            ObservableCollection<DistroModel> tempCollection = _distroLaunchCloseViewModel.Parent.DistroCollection;
+            ObservableCollection<DistroModel> tempCollection = _mainWindowViewModel.DistroCollection;
             for (int i = 0; i < tempCollection.Count; i++)
             {
                 if (tempCollection[i].IsRunning)
@@ -42,7 +44,7 @@ namespace WSLManager.Commands.DistroLaunchCloseCommands
         //Defines the method to be called when the command is invoked
         public void Execute(object parameter)
         {
-            ObservableCollection<DistroModel> tempCollection = _distroLaunchCloseViewModel.Parent.DistroCollection;
+            ObservableCollection<DistroModel> tempCollection = _mainWindowViewModel.DistroCollection;
             for (int i = 0; i < tempCollection.Count; i++)
             {
                 if (tempCollection[i].IsRunning)
