@@ -34,8 +34,9 @@
             Grid.Row="2"
             Grid.Column="1"
             DisplayMemberPath="DistroNameStatus"
-            ItemsSource="{Binding DataContext.DistroCollection, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type WSLManager:MainWindow}}}"
-            SelectedItem="{Binding SelectedDistroModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            SelectedItem="{Binding SelectedDistroModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            ItemsSource="{Binding DataContext.DistroCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type WSLManager:MainWindow}}}"
+             />
 
         <TextBlock
             Grid.Row="3"
