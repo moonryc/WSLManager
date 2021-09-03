@@ -11,37 +11,29 @@
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
-
-
             <RowDefinition Height="*" />
-
             <RowDefinition Height="*" />
-
             <RowDefinition Height="*" />
-
             <RowDefinition Height="*" />
-
             <RowDefinition Height="*" />
-
             <RowDefinition Height="*" />
-
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ComboBox
-            Grid.Row="2"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            DisplayMemberPath="DistroNameStatus"
-            ItemsSource="{Binding DataContext.DistroCollection, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type WSLManager:InstallerWindow}}}"
-            SelectedIndex="{Binding SelectedDistroIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            SelectedItem="{Binding DistroModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <CheckBox Grid.Row="4" Content="Is this distro Kali?" />
         <Button
             Grid.Row="0"
             Command="{Binding UpdateViewCommand}"
             CommandParameter="InstallerIntro"
             Content="Back" />
+        <ComboBox
+            Grid.Row="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            DisplayMemberPath="DistroNameStatus"
+            ItemsSource="{Binding InstallerDistroCollection, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+            SelectedIndex="{Binding SelectedDistroIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItem="{Binding DistroModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <CheckBox Grid.Row="4" Content="Is this distro Kali?" IsChecked="{Binding IsKali}" />
         <Button
             Grid.Row="6"
             Command="{Binding InstallGuiToolsCommand}"
