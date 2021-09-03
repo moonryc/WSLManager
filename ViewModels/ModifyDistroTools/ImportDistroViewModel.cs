@@ -56,7 +56,21 @@ namespace WSLManager.ViewModels.ModifyDistroTools
                 OnPropertyChanged();
             }
         }
+        
+        /// <summary>
+        /// Constructor 
+        /// </summary>
+        /// <param name="parent"></param>
+        public ImportDistroViewModel(MainWindowViewModel parent)
+        {
+            _parent = parent;
+            UpdateViewCommand = new UpdateViewCommand(_parent);
+            ImportDistroCommand = new ImportDistroCommand(this);
+            SelectDistroToImportCommand = new SelectDistroToImportCommand(this);
+            SelectDirectoryImportCommand = new SelectDirectoryImportCommand(this);
+        }
 
+        // commands binded to viewmodel
         public ICommand UpdateViewCommand { get; set; }
         public ICommand ImportDistroCommand { get; set; }
         public ICommand SelectDistroToImportCommand { get; set; }
