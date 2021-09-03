@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
 using WSLManager.Commands;
 using WSLManager.Commands.DistroLaunchCloseCommands;
 using WSLManager.Models;
@@ -7,25 +8,36 @@ namespace WSLManager.ViewModels
 {
     public class DistroLaunchCloseViewModel : BaseViewModel
     {
-        private int _userLoginType = (int)LoginOptions.SelectLoginMethod;
+        private int _userLoginType = 0;
         private string _userName = "User Name";
-        private int _selectedDistroIndex = 0;
-        private DistroModel _selectedDistroModel;
         private MainWindowViewModel _parent;
         private bool _userNameFieldCommand = false;
 
-        public MainWindowViewModel Parent
+        private ObservableCollection<DistroModel> _launchCloseDistroCollection;
+        
+        /// <summary>
+        /// Gets/Sets wether of not the username field should be accessable
+        /// </summary>
+        public bool UserNameFieldCommand
         {
-            get => _parent;
-        }
-
-        public int SelectedDistroIndex
-        {
-            get => _selectedDistroIndex;
+            get => _userNameFieldCommand;
             set
             {
-                _selectedDistroIndex = value;
-                if ((LoginOptions)_selectedDistroIndex == LoginOptions.SpecificUser)
+                _userNameFieldCommand = value;
+                OnPropertyChanged();
+            }
+        }
+        
+        /// <summary>
+        ///  Gets/sets the UserLogin type
+        /// </summary>
+        public int UserLoginType
+        {
+            get => _userLoginType;
+            set
+            {
+                _userLoginType = value;
+                if ((LoginOptions)_userLoginType == LoginOptions.SpecificUser)
                 {
                     UserNameFieldCommand = true;
                 }
@@ -36,35 +48,10 @@ namespace WSLManager.ViewModels
                 OnPropertyChanged();
             }
         }
-
-        //TODO: FIX THIS
-        public bool UserNameFieldCommand
-        {
-            get => _userNameFieldCommand;
-            set
-            {
-                _userNameFieldCommand = value;
-                OnPropertyChanged();
-            }
-        }
-        public DistroModel SelectedDistroModel
-        {
-            get => _selectedDistroModel;
-            set
-            {
-                _selectedDistroModel = value;
-                OnPropertyChanged();
-            }
-        }
-        public int UserLoginType
-        {
-            get => _userLoginType;
-            set
-            {
-                _userLoginType = value;
-                OnPropertyChanged();
-            }
-        }
+        
+        /// <summary>
+        /// Gets/sets The Username used to login to the distro
+        /// </summary>
         public string UserName
         {
             get => _userName;
@@ -75,16 +62,22 @@ namespace WSLManager.ViewModels
             }
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="parent"></param>
         public DistroLaunchCloseViewModel(MainWindowViewModel parent)
         {
-            StartDistroCommand = new StartDistroCommand(this);
-            StopSelectedDistroCommand = new StopSelectedDistroCommand(this);
-            StopAllDistrosCommand = new StopAllDistrosCommand(this);
             _parent = parent;
+            StartDistroCommand = new StartDistroCommand(this, _parent);
+            StopSelectedDistroCommand = new StopSelectedDistroCommand(this,_parent);
+            StopAllDistrosCommand = new StopAllDistrosCommand(this, _parent);
+            
             UpdateViewCommand = new UpdateViewCommand(_parent);
         }
 
 
+        //Commands binded to buttons
         public ICommand StartDistroCommand { get; set; }
         public ICommand StopSelectedDistroCommand { get; set; }
         public ICommand StopAllDistrosCommand { get; set; }
