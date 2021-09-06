@@ -26,7 +26,12 @@ namespace WSLManager.Commands
         //Defines the method that determines whether the command can be executed in its current state
         public bool CanExecute(object parameter)
         {
-            return true;
+            if (_mainWindowViewModel.CanGoBack)
+            {
+                return true;    
+            }
+
+            return false;
         }
 
         //Defines the method to be called when the command is invoked
