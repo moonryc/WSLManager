@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Timers;
 using System.Windows;
+using System.Windows.Data;
 using WSLManager.Logger.Core;
 using WSLManager.Models;
 using Timer = System.Timers.Timer;
@@ -13,7 +14,6 @@ namespace WSLManager.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        
         private DistroBankModel _distroBank = new DistroBankModel();
         private ObservableCollection<DistroModel> _distroCollection = new ObservableCollection<DistroModel>();
         private static Timer _updateTimer;
@@ -21,6 +21,23 @@ namespace WSLManager.ViewModels
         private ObservableCollection<DistroModel> _oldDistroCollection;
         private DistroModel _selectedDistroModel;
         private int _selectedDistroIndex;
+        private bool _canGoBack = true;
+        object _mylock = new object();
+
+        public bool CanGoBack
+        {
+            get => _canGoBack;
+            set
+            {
+                _canGoBack = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public DistroBankModel DistroBank
+        {
+            get => _distroBank;
+        }
 
         /// <summary>
         /// Gets/Sets The selected viewmodel
@@ -55,26 +72,20 @@ namespace WSLManager.ViewModels
         /// </summary>
         public DistroModel SelectedDistroModel
         {
-            get
-            {
-                return _selectedDistroModel;
-            }
+            get { return _selectedDistroModel; }
             set
             {
                 _selectedDistroModel = value;
                 OnPropertyChanged();
             }
         }
-        
+
         /// <summary>
         /// Gets/Sets the selected distro index
         /// </summary>
         public int SelectedDistroIndex
         {
-            get
-            {
-                return _selectedDistroIndex;
-            }
+            get { return _selectedDistroIndex; }
             set
             {
                 _selectedDistroIndex = value;
@@ -88,6 +99,8 @@ namespace WSLManager.ViewModels
         public MainWindowViewModel()
         {
             _baseViewModel = new DistroLaunchCloseViewModel(this);
+            Application.Current.Dispatcher.Invoke(() =>
+                BindingOperations.EnableCollectionSynchronization(DistroCollection, _mylock));
             UpdateObservableCollection();
             Thread timerThread = new Thread(() => TimerBackgroundUpdate(2));
             timerThread.Name = "Timer Thread";
@@ -117,28 +130,24 @@ namespace WSLManager.ViewModels
         {
             Thread backgroundUpdateThread = new Thread(() =>
             {
-                
                 _distroBank.UpdateDictionary();
                 UpdateObservableCollection();
-                
             });
             backgroundUpdateThread.Name = $"Background update";
             backgroundUpdateThread.Start();
         }
 
         private bool test = true;
+
         /// <summary>
         /// Updates the Observable Collection
         /// </summary>
         private void UpdateObservableCollection()
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                CompareOldAndCurrentCollection();
-                OldCollectionUpdate();
-            });
+            CompareOldAndCurrentCollection();
+            OldCollectionUpdate();
         }
-        
+
         /// <summary>
         /// Updates the Observable collection by checking 2 different things
         /// (1) are the number of distros in the bankModel different from that of the Collection
@@ -148,39 +157,42 @@ namespace WSLManager.ViewModels
         /// <returns>Nothing</returns>
         private int CompareOldAndCurrentCollection()
         {
-            
-            List<DistroModel> distroModelList = _distroBank.DistroDictionary.Values.ToList();
-            ObservableCollection<DistroModel> tempCollection = new ObservableCollection<DistroModel>();
-
-            foreach (var keyValuePair in _distroBank.DistroDictionary)
+            lock (_mylock)
             {
-                tempCollection.Add(keyValuePair.Value);
-            }
-            
-            //if a distro has been added or removed
-            if (DistroCollection.Count != distroModelList.Count)
-            {
-                DistroCollection = tempCollection;
-                IoC.Base.IoC.baseFactory.Log("Collection updated Due to Size",LogLevel.Debug);
-                return 0;
-            }
+                List<DistroModel> distroModelList = _distroBank.DistroDictionary.Values.ToList();
+                ObservableCollection<DistroModel> tempCollection = new ObservableCollection<DistroModel>();
 
-            //if the content between old and new differs 
-            for (int i = 0; i < distroModelList.Count; i++)
-            {
-                bool test1 = DistroCollection[i].DistroName == _oldDistroCollection[i].DistroName;
-                bool test2 = DistroCollection[i].IsRunning == _oldDistroCollection[i].IsRunning;
-                bool test3 = DistroCollection[i].WslVersion == _oldDistroCollection[i].WslVersion;
+                foreach (var keyValuePair in _distroBank.DistroDictionary)
+                {
+                    tempCollection.Add(keyValuePair.Value);
+                }
 
-                if (!test1 || !test2 || !test3)
+                //if a distro has been added or removed
+                if (DistroCollection.Count != distroModelList.Count)
                 {
                     DistroCollection = tempCollection;
-                    IoC.Base.IoC.baseFactory.Log("Collection updated due to Content",LogLevel.Debug);
+                    IoC.Base.IoC.baseFactory.Log("Collection updated Due to Size", LogLevel.Debug);
                     return 0;
                 }
+
+                //if the content between old and new differs 
+                for (int i = 0; i < distroModelList.Count; i++)
+                {
+                    bool test1 = DistroCollection[i].DistroName == _oldDistroCollection[i].DistroName;
+                    bool test2 = DistroCollection[i].IsRunning == _oldDistroCollection[i].IsRunning;
+                    bool test3 = DistroCollection[i].WslVersion == _oldDistroCollection[i].WslVersion;
+
+                    if (!test1 || !test2 || !test3)
+                    {
+                        DistroCollection = tempCollection;
+                        IoC.Base.IoC.baseFactory.Log("Collection updated due to Content", LogLevel.Debug);
+                        return 0;
+                    }
+                }
+
+                IoC.Base.IoC.baseFactory.Log("No Change", LogLevel.Informative);
+                return 0;
             }
-            IoC.Base.IoC.baseFactory.Log("No Change",LogLevel.Informative);
-            return 0;
         }
 
         /// <summary>
@@ -190,13 +202,12 @@ namespace WSLManager.ViewModels
         private void OldCollectionUpdate()
         {
             _oldDistroCollection = new ObservableCollection<DistroModel>();
-            foreach(DistroModel distro in DistroCollection) 
+            foreach (DistroModel distro in DistroCollection)
             {
-                _oldDistroCollection.Add(new DistroModel(distro.DistroName,distro.IsRunning,distro.WslVersion));
+                _oldDistroCollection.Add(new DistroModel(distro.DistroName, distro.IsRunning, distro.WslVersion));
             }
         }
-        
-        
+
         #endregion
     }
 }
