@@ -82,14 +82,30 @@ namespace WSLManager.ViewModels.Installer
                 {
                     SameBlockProgress("Loading Commands into Script file");
                     SameBlockProgress($"Adding the following commands to the file located at {_installerModel.WindowsFileLocation} before converting to batch script");
-                    
-                    //writes commands to file
-                    foreach (string command in _installerModel.BashCommandsToAppend)
+
+                    createFile.WriteLine("#!/bin/bash");
+                    SameBlockProgress($"Successfully added command: #!/bin/bash to the script.");  
+                    if (_isKali)
                     {
-                        Thread.Sleep(300);
-                        createFile.WriteLine(command);
-                        SameBlockProgress($"Successfully added command: {command} to the script.");
+                        foreach (string kaliCommand in _installerModel.KaliCommands)
+                        {
+                            Thread.Sleep(300);
+                            createFile.WriteLine(kaliCommand);
+                            SameBlockProgress($"Successfully added command: {kaliCommand} to the script.");    
+                        }
                     }
+                    else
+                    {
+                        //writes commands to file
+                        foreach (string command in _installerModel.BashCommandsToAppend)
+                        {
+                            Thread.Sleep(300);
+                            createFile.WriteLine(command);
+                            SameBlockProgress($"Successfully added command: {command} to the script.");
+                        }   
+                    }
+                    createFile.WriteLine("exit");
+                    SameBlockProgress($"Successfully added command: exit to the script.");  
                 }
             }
             SameBlockProgress($"Successfully added commands to the script.");
