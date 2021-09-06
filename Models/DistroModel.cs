@@ -1,6 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using WSLManager.Logger.Core;
 
 namespace WSLManager.Models
 {
@@ -86,7 +88,15 @@ namespace WSLManager.Models
             terminater.StartInfo.Arguments = $"/k wsl -t {DistroName}";
             terminater.StartInfo.CreateNoWindow = true;
             terminater.Start();
-            _distroProcess.Kill();
+            try
+            {
+                _distroProcess.Kill();
+            }
+            catch(Exception e)
+            {
+                IoC.Base.IoC.baseFactory.Log(e.Message,LogLevel.Critical);
+            }
+            
         }
         
         
