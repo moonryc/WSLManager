@@ -11,7 +11,11 @@ namespace WSLManager.ViewModels.ModifyDistroTools
         private MainWindowViewModel _parent;
         private DistroModel _selectedDistroModel;
         private string _messageOutput="";
+        private bool _isIndetermiante = false;
 
+
+        public MainWindowViewModel MainWindowViewModel { get=>_parent;}
+        
         /// <summary>
         /// Gets/Sets the selected distro model
         /// </summary>
@@ -46,6 +50,16 @@ namespace WSLManager.ViewModels.ModifyDistroTools
             set
             {
                 _messageOutput = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsIndeterminate
+        {
+            get => _isIndetermiante;
+            set
+            {
+                _isIndetermiante = value;
                 OnPropertyChanged();
             }
         }

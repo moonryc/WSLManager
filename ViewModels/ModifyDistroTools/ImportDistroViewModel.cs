@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 using WSLManager.Commands;
-using WSLManager.Commands.ImportExportDistro;
+using WSLManager.Commands.ImportExportRemoveDistro;
 
 namespace WSLManager.ViewModels.ModifyDistroTools
 {
@@ -11,9 +11,29 @@ namespace WSLManager.ViewModels.ModifyDistroTools
         private string _filePath = "";
         private string _installFilePath = "Select Install Location";
         private string _fullFilePath = "Select Distro File";
-        
-        
-        
+        private string _messageOutput = "";
+        private bool _isIndetermiante = false;
+
+
+        public string MessageOutput
+        {
+            get => _messageOutput;
+            set
+            {
+                _messageOutput = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsIndeterminate
+        {
+            get => _isIndetermiante;
+            set
+            {
+                _isIndetermiante = value;
+                OnPropertyChanged();
+            }
+        }
 
         // the file path of the distro to be imported
         public string FullFilePath
