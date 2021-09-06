@@ -10,7 +10,7 @@ namespace WSLManager.Models
     {
         private bool _isKali;
         private string _distro = "";
-        
+
         public InstallerModel(string distro, bool isKali)
         {
             _isKali = isKali;
@@ -21,25 +21,54 @@ namespace WSLManager.Models
 
         private static string fileName { get; } = "GUIInstallerScript";
         private static string folderName { get; } = "WSLInstaller";
-        private static string windowsFolderLocation { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), folderName); // /wslinstaller
-        private static string windowsFileLocation { get; } = Path.Combine(windowsFolderLocation, fileName); // /wslinstaller/guiinstallerscript
+
+        private static string windowsFolderLocation { get; } =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                folderName); // /wslinstaller
+
+        private static string windowsFileLocation { get; } =
+            Path.Combine(windowsFolderLocation, fileName); // /wslinstaller/guiinstallerscript
+
         private static string linuxFolderToMoveFolderTo { get; } = "/tmp";
         private static string LinuxScriptFolderLocation { get; } = $"{linuxFolderToMoveFolderTo}/{folderName}";
         private static string LinuxScriptFileLocation { get; } = $"{LinuxScriptFolderLocation}/{fileName}";
-        private static string linuxFilePathToWindowsLocationForCopying { get; } = windowsFolderLocation.Replace(@"\", "/").Replace("C:", "/mnt/c");
-        private static string removeFolderFromDistro {get;}= $"-u root -e rm -rf {LinuxScriptFolderLocation}";
-        private static string doesDistroHaveFolder {get;}= $"-e test -d \"{LinuxScriptFolderLocation}\" && echo \"CONTAINS OLD VERSION\"";
-        private static string removeFolderFromWindowsFull {get;}= $"/c rmdir /s /q {windowsFolderLocation} ";
+
+        private static string linuxFilePathToWindowsLocationForCopying { get; } =
+            windowsFolderLocation.Replace(@"\", "/").Replace("C:", "/mnt/c");
+
+        private static string removeFolderFromDistro { get; } = $"-u root -e rm -rf {LinuxScriptFolderLocation}";
+
+        private static string doesDistroHaveFolder { get; } =
+            $"-e test -d \"{LinuxScriptFolderLocation}\" && echo \"CONTAINS OLD VERSION\"";
+
+        private static string removeFolderFromWindowsFull { get; } = $"/c rmdir /s /q {windowsFolderLocation} ";
+
         //$"/c Remove-Item {windowsFolderLocation} -Force  -Recurse -ErrorAction SilentlyContinue";
-        private static string makeNewFolderWindows {get;}= $"/c mkdir {windowsFolderLocation}";
-        private static string moveCommand { get; } = $"-u root -e cp -R {linuxFilePathToWindowsLocationForCopying} {linuxFolderToMoveFolderTo}";
-        private static string convertToBatchShell { get; } = $"-u root -e mv {LinuxScriptFileLocation} {LinuxScriptFileLocation}.sh";
-        private static string carrigeReturn { get; } = $"-u root -e sed -i -e {Regex.Escape("\"s/\r") + "$" + Regex.Escape("//\"").Replace(" ", "")} {LinuxScriptFileLocation}";
+        private static string makeNewFolderWindows { get; } = $"/c mkdir {windowsFolderLocation}";
+
+        private static string moveCommand { get; } =
+            $"-u root -e cp -R {linuxFilePathToWindowsLocationForCopying} {linuxFolderToMoveFolderTo}";
+
+        private static string convertToBatchShell { get; } =
+            $"-u root -e mv {LinuxScriptFileLocation} {LinuxScriptFileLocation}.sh";
+
+        private static string carrigeReturn { get; } =
+            $"-u root -e sed -i -e {Regex.Escape("\"s/\r") + "$" + Regex.Escape("//\"").Replace(" ", "")} {LinuxScriptFileLocation}";
+
         private static string makeRunnable { get; } = $"-u root -e chmod +x {LinuxScriptFileLocation}.sh";
         private static string runScriptCommand { get; } = $"-e sudo sh {LinuxScriptFileLocation}.sh";
-        private static string[] bashCommandsToAppend { get; }=
+
+        private static string[] kaliCommands { get; } =
         {
-            "#!/bin/bash",
+            "sudo apt update", "apt upgrade",
+            @"echo >> deb http://http.kali.org/kali kali-experimental main contrib non-free /etc/apt/sources.list",
+            @"apt update", "apt install -t kali-experimental '?upgradable ?source-package(\"mesa|libdrm\")'",
+            "sudo apt install -y kali-win-kex", "sudo su - && sudo apt install -y kali-linux-large"
+        };
+
+        private static string[] bashCommandsToAppend { get; } =
+        {
+            
             "sudo apt-get update",
             "sudo apt -y upgrade",
             "sudo apt-get purge xrdp",
@@ -53,14 +82,26 @@ namespace WSLManager.Models
             "echo xfce4-session > ~/.xsession",
             "sudo su - && sudo echo -e \"# xfce\" >> /etc/xrdp/startwm.sh",
             "sudo su - && sudo echo -e \"startxfce\" >> /etc/xrdp/startwm.sh",
-            "exit",
+            
         };
 
-        public string WindowsFileLocation { get=>windowsFileLocation;}
-        public string[] BashCommandsToAppend { get=>bashCommandsToAppend; }
+        public string WindowsFileLocation
+        {
+            get => windowsFileLocation;
+        }
+
+        public string[] KaliCommands
+        {
+            get => kaliCommands;
+        }
         
+        public string[] BashCommandsToAppend
+        {
+            get => bashCommandsToAppend;
+        }
+
         #endregion
-        
+
         /// <summary>
         /// Runs the user entered CMD
         /// </summary>
@@ -85,12 +126,13 @@ namespace WSLManager.Models
             process.Start();
 
             //Wait for process to finish
-            string returnText = process.StandardOutput.ReadToEnd();                          
+            string returnText = process.StandardOutput.ReadToEnd();
             string error = process.StandardError.ReadToEnd();
             if (!error.Equals(""))
             {
                 throw new Exception(error);
-            }           
+            }
+
             process.WaitForExit();
             returnText = returnText.Replace("*", "").Replace("\0", "").Replace("\r", "");
             for (int i = 0; i < returnText.Length; i++)
@@ -98,41 +140,43 @@ namespace WSLManager.Models
                     returnText = returnText.Replace("  ", " ");
             return returnText;
         }
-        
+
         #region Installer Methods
 
-         /// <summary>
-         /// Handles the removal of WSLInstaller folders on windows they exist before running the rest of the program
-         /// </summary>
-         public string RemovePriorWslInstallerFilesWindows()
-         {
-             //First windows cleanup
-             if (Directory.Exists(windowsFolderLocation))
-             {
-                 CommandAction(removeFolderFromWindowsFull,true);
-                 return $"Removing outdated GUIInstaller folders at {windowsFolderLocation} \n";
-             }
-             return "";
-         }
-        
-         /// <summary>
-         /// Handles the removal of WSLInstaller folders in the distro if they exist before running the rest of the program
-         /// </summary>
-         public string RemovePriorWslInstallerFilesFromDistro()
-         {
-             string testToRemoveExistingMkDir = $"/c wsl -d {_distro} {doesDistroHaveFolder}";
-             string removeExistingScriptInDistro = $"/c wsl -d {_distro} {removeFolderFromDistro}";
-             
-             //Handels the of the Existing Script in the Distro
-             string outputTestRemove = CommandAction(testToRemoveExistingMkDir, true);
-             if (outputTestRemove.Contains("CONTAINS OLD VERSION"))
-             {
-                 CommandAction(removeExistingScriptInDistro, true);
-                 return $"Removing outdated batch WSLInstaller Folder located in {_distro}";
-             }
-             return "";
-         }
-         
+        /// <summary>
+        /// Handles the removal of WSLInstaller folders on windows they exist before running the rest of the program
+        /// </summary>
+        public string RemovePriorWslInstallerFilesWindows()
+        {
+            //First windows cleanup
+            if (Directory.Exists(windowsFolderLocation))
+            {
+                CommandAction(removeFolderFromWindowsFull, true);
+                return $"Removing outdated GUIInstaller folders at {windowsFolderLocation} \n";
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// Handles the removal of WSLInstaller folders in the distro if they exist before running the rest of the program
+        /// </summary>
+        public string RemovePriorWslInstallerFilesFromDistro()
+        {
+            string testToRemoveExistingMkDir = $"/c wsl -d {_distro} {doesDistroHaveFolder}";
+            string removeExistingScriptInDistro = $"/c wsl -d {_distro} {removeFolderFromDistro}";
+
+            //Handels the of the Existing Script in the Distro
+            string outputTestRemove = CommandAction(testToRemoveExistingMkDir, true);
+            if (outputTestRemove.Contains("CONTAINS OLD VERSION"))
+            {
+                CommandAction(removeExistingScriptInDistro, true);
+                return $"Removing outdated batch WSLInstaller Folder located in {_distro}";
+            }
+
+            return "";
+        }
+
         /// <summary>
         ///     creates folder in C:\programs
         ///     full path is C:\programs\WSLInstaller
@@ -144,46 +188,25 @@ namespace WSLManager.Models
         }
         
         /// <summary>
-        ///     Creates the text file which will store the script
-        /// </summary>
-        public void GenerateBashScriptTextFile()
-        {
-            //create file
-            if (!File.Exists(windowsFileLocation))
-            {
-                using (StreamWriter createFile = File.CreateText(windowsFileLocation))
-                {
-                    //writes commands to file
-                    foreach (string command in bashCommandsToAppend)
-                    {
-                        Thread.Sleep(300);
-                        createFile.WriteLine(command);
-                    }
-                }
-            }
-            
-        }
-        
-        /// <summary>
         /// Moves the script to the /tmp/WSLInstaller/GUIInstaller
         /// </summary>
         public string MoveScriptToWsl()
         {
             string command = $"/c wsl -d {_distro} {moveCommand}";
-            CommandAction(command,true);
+            CommandAction(command, true);
             return "Moved script to {Distro} to folder {InstallerCommands.LinuxScriptFolderLocation} successfully";
         }
-        
+
         /// <summary>
         /// Corrects the Carriage returns in the script to make it runnable
         /// </summary>
         public string CorrectingCarriageReturns()
         {
             string command = $"/c wsl -d {_distro} {carrigeReturn}";
-            CommandAction(command,true);
+            CommandAction(command, true);
             return "Correcting carriage returns to make file runnable";
         }
-        
+
         /// <summary>
         /// Converts the file to .sh
         /// </summary>
@@ -193,7 +216,7 @@ namespace WSLManager.Models
             CommandAction(command, true);
             return "Converted file to batch script successfully";
         }
-        
+
         /// <summary>
         ///     Makes it so that the script can be excecuted
         /// </summary>
@@ -204,14 +227,14 @@ namespace WSLManager.Models
             CommandAction(command, true);
             return $"The Script is now runnable by the distro using {command}";
         }
-        
+
         /// <summary>
         ///     Runs the bash script in the distro
         /// </summary>
         public void RunScript()
         {
             string command = $"wsl -d {_distro} {runScriptCommand}";
-            
+
             Process runScript = new Process();
             runScript.StartInfo.FileName = "cmd.exe";
             runScript.StartInfo.Arguments = $"/k {command}";
@@ -220,7 +243,7 @@ namespace WSLManager.Models
             runScript.Start();
             runScript.WaitForExit();
         }
-        
+
         #endregion
     }
 }
