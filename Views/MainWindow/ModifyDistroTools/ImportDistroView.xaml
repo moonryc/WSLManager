@@ -11,6 +11,11 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
+            <RowDefinition Height=".25*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
@@ -25,8 +30,21 @@
             CommandParameter="ModifyDistroTools"
             Content="Back" />
 
-        <TextBox Grid.Row="2" Text="{Binding DistroName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <Grid Grid.Row="4">
+
+        <Label
+            Grid.Row="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Content="Custom Distro Name" />
+        <TextBox Grid.Row="3" Text="{Binding DistroName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Label
+            Grid.Row="4"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Content="Distro File" />
+
+        <Grid Grid.Row="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="4*" />
                 <ColumnDefinition Width="*" />
@@ -35,9 +53,16 @@
             <Button
                 Grid.Column="1"
                 Command="{Binding SelectDistroToImportCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                Content=".." />
+                Content="..." />
         </Grid>
-        <Grid Grid.Row="6">
+
+        <Label
+            Grid.Row="6"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Content="Install Destination" />
+
+        <Grid Grid.Row="7">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="4*" />
                 <ColumnDefinition Width="*" />
@@ -49,9 +74,19 @@
                 Content="..." />
         </Grid>
 
+        <Label Grid.Row="9" Content="{Binding MessageOutput}"/>
+        
+        <ProgressBar
+            Grid.Row="11"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch" 
+            IsIndeterminate="{Binding IsIndeterminate}"/>
+
         <Button
-            Grid.Row="8"
+            Grid.Row="13"
             Command="{Binding ImportDistroCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             Content="Import Distro" />
+
+
     </Grid>
 </UserControl>

@@ -10,12 +10,11 @@
     d:DesignWidth="300"
     mc:Ignorable="d">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <!-- <ColumnDefinition Width="*"/> -->
-            <!-- <ColumnDefinition Width="*"/> -->
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
@@ -25,29 +24,39 @@
         </Grid.RowDefinitions>
 
         <Button
-            Grid.Column="1"
+            Grid.Row="0"
             Command="{Binding UpdateViewCommand}"
             CommandParameter="ModifyDistroTools"
             Content="Back" />
 
-        <ComboBox
+        <Label
             Grid.Row="2"
-            Grid.Column="1"
-            DisplayMemberPath="DistroNameStatus"
-            SelectedItem="{Binding SelectedDistroModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            ItemsSource="{Binding DataContext.DistroCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type WSLManager:MainWindow}}}"
-             />
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Content="Select Distro:" />
 
-        <TextBlock
+        <ComboBox
             Grid.Row="3"
-            Grid.Column="1"
-            Text="THIS IS PLACEHOLDER TEXT AT THE MOMENT" />
+            DisplayMemberPath="DistroNameStatus"
+            SelectedIndex="0"
+            ItemsSource="{Binding DataContext.DistroCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type WSLManager:MainWindow}}}"
+            SelectedItem="{Binding SelectedDistroModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock Grid.Row="5" Text="{Binding MessageOutput}" />
+
+        <ProgressBar
+            Grid.Row="7"
+            IsIndeterminate="{Binding IsIndeterminate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch" />
+
         <Button
-            Grid.Row="5"
-            Grid.Column="1"
+            Grid.Row="9"
             Command="{Binding ConvertDistroCommand}"
             CommandParameter="{Binding SelectedDistroModel}"
             Content="Convert Distro" />
+
+
 
     </Grid>
 </UserControl>
