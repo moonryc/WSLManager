@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using WSLManager.ViewModels.ModifyDistroTools;
 
-namespace WSLManager.Commands.ImportExportDistro
+namespace WSLManager.Commands.ImportExportRemoveDistro
 {
     public class SelectDirectoryImportCommand:ICommand
     {
@@ -27,6 +27,10 @@ namespace WSLManager.Commands.ImportExportDistro
         //Defines the method that determines whether the command can be executed in its current state
         public bool CanExecute(object parameter)
         {
+            if (_viewModel.IsIndeterminate)
+            {
+                return false;
+            }
             return true;
         }
 

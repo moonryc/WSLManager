@@ -6,10 +6,10 @@ using WSLManager.ViewModels.ModifyDistroTools;
 
 namespace WSLManager.Commands.ConvertWslCommands
 {
-    public class ConvertDistroCommand:ICommand
+    public class ConvertDistroCommand : ICommand
     {
         private ConvertWslVersionViewModel _convertWslVersionViewModel;
-        
+
         public ConvertDistroCommand(ConvertWslVersionViewModel viewModel)
         {
             _convertWslVersionViewModel = viewModel;
@@ -28,26 +28,63 @@ namespace WSLManager.Commands.ConvertWslCommands
         //Defines the method that determines whether the command can be executed in its current state
         public bool CanExecute(object parameter)
         {
-            DistroModel selectedDistroModel = _convertWslVersionViewModel.SelectedDistroModel;
-            if (selectedDistroModel != null && !selectedDistroModel.DistroName.Contains("Select") &&
-                !selectedDistroModel.IsRunning && selectedDistroModel.WslVersion == 1)
+            if (_convertWslVersionViewModel.IsIndeterminate)
             {
-                return true;
+                return false;
             }
-            return false;
+            
+            DistroModel selectedDistroModel = _convertWslVersionViewModel.SelectedDistroModel;
+            if (selectedDistroModel == null || selectedDistroModel.DistroName.Contains("Select Distro"))
+            {
+                _convertWslVersionViewModel.MessageOutput = "Select a valid Distro";
+                return false;
+            }
+
+            if (selectedDistroModel.WslVersion == 2)
+            {
+                _convertWslVersionViewModel.MessageOutput = "Selected Distro is already a valid WSL2 distro";
+                return false;
+            }
+
+            if (selectedDistroModel.IsRunning)
+            {
+                _convertWslVersionViewModel.MessageOutput =
+                    "Distro is currently running, please close the distro and try again";
+                return false;
+            }
+
+            _convertWslVersionViewModel.MessageOutput =
+                "Distro is valid for upgrade, press \"Convert Distro\" below to upgrade";
+            return true;
         }
 
         //Defines the method to be called when the command is invoked
         public void Execute(object parameter)
         {
-            string selectedDistroName = _convertWslVersionViewModel.SelectedDistroModel.DistroName;
-            Process upgrade = new Process();
-            upgrade.StartInfo.FileName = "cmd.exe";
-            upgrade.StartInfo.Arguments = $"/c wsl --set-version {selectedDistroName} 2";
-            upgrade.StartInfo.CreateNoWindow = false;
-            
-            upgrade.Start();
-            
+            _convertWslVersionViewModel.MainWindowViewModel.CanGoBack = false;
+            Thread convertDistroThread = new Thread(() =>
+            {
+                string selectedDistroName = _convertWslVersionViewModel.SelectedDistroModel.DistroName;
+                Process upgrade = new Process();
+                upgrade.StartInfo.FileName = "cmd.exe";
+                upgrade.StartInfo.Arguments = $"/c wsl --set-version {selectedDistroName} 2";
+                upgrade.StartInfo.CreateNoWindow = true;
+
+                upgrade.Start();
+                
+                while (!upgrade.HasExited)
+                {
+                    _convertWslVersionViewModel.IsIndeterminate = true;
+                    _convertWslVersionViewModel.MessageOutput = "Converting distro please wait";
+                }
+                _convertWslVersionViewModel.MainWindowViewModel.CanGoBack = true;
+                _convertWslVersionViewModel.IsIndeterminate = !upgrade.HasExited;
+                _convertWslVersionViewModel.MessageOutput = "Distro has been Converted to WSL2";
+            });
+
+
+            convertDistroThread.Name = "Convert Distro Thread";
+            convertDistroThread.Start();
         }
 
         #endregion
