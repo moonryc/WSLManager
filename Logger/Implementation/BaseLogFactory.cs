@@ -112,13 +112,13 @@ namespace WSLManager.Logger.Implementation
             string message, 
             LogLevel level = LogLevel.Informative, 
             [CallerMemberName] string origin = "", 
-            [CallerMemberName] string filePath = "",
+            [CallerFilePath] string filePath = "",
             [CallerLineNumber] int lineNumber = 0)
         {
             //if user wants to know origin of log message
             if (IncludeLogOriginDetails)
             {
-                message = $" >>> [FileName: {Path.GetFileName(filePath)}, LineNumber: {lineNumber}, Origin: {origin}] >>> {message}\n";
+                message = $" > [FileName: {Path.GetFileName(filePath)}, LineNumber: {lineNumber}, Origin: {origin}()] > {message}";
             }
             
             // Log to all Loggers

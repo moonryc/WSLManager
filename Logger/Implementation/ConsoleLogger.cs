@@ -13,7 +13,7 @@ namespace WSLManager.Logger.Implementation
         public void Log(string message, LogLevel level)
         {
             //Write Message to console
-            Trace.WriteLine($"[Level: {level.ToString()}]" + message);
+            Trace.WriteLine($"[{level.ToString()}]" + message);
         }
     }
 }
