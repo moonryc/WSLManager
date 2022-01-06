@@ -7,7 +7,7 @@
 * [Installation](#installation)
 * [Usage](#usage)
 * [Bugs](#bugs)
-* [Upcoming Features](#upcoming Features)
+* [Upcoming Features](#upcoming-features)
 * [Credits](#credits)
 * [License](#license)
 
