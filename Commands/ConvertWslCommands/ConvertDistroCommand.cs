@@ -75,15 +75,16 @@ namespace WSLManager.Commands.ConvertWslCommands
                 
                 while (!upgrade.HasExited)
                 {
-                    _convertWslVersionViewModel.IsIndeterminate = true;
-                    _convertWslVersionViewModel.MessageOutput = "Converting distro please wait";
+                    if (_convertWslVersionViewModel.IsIndeterminate != true)
+                    {
+                        _convertWslVersionViewModel.IsIndeterminate = true;
+                        _convertWslVersionViewModel.MessageOutput = "Converting distro please wait";
+                    }
                 }
                 _convertWslVersionViewModel.MainWindowViewModel.CanGoBack = true;
                 _convertWslVersionViewModel.IsIndeterminate = !upgrade.HasExited;
                 _convertWslVersionViewModel.MessageOutput = "Distro has been Converted to WSL2";
             });
-
-
             convertDistroThread.Name = "Convert Distro Thread";
             convertDistroThread.Start();
         }

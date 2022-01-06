@@ -102,9 +102,8 @@ namespace WSLManager.ViewModels
             Application.Current.Dispatcher.Invoke(() =>
                 BindingOperations.EnableCollectionSynchronization(DistroCollection, _mylock));
             UpdateObservableCollection();
-            Thread timerThread = new Thread(() => TimerBackgroundUpdate(2));
-            timerThread.Name = "Timer Thread";
-            timerThread.Start();
+            TimerBackgroundUpdate(2);
+
         }
 
         #region Update DistroBank and ObservableCollection

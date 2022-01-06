@@ -65,8 +65,11 @@ namespace WSLManager.Commands.ImportExportRemoveDistro
 
                 while (!removeProcess.HasExited)
                 {
-                    _viewModel.MessageText = "Removing distro please wait";
-                    _viewModel.IsIndeterminate = true;
+                    if (_viewModel.IsIndeterminate != true)
+                    {
+                        _viewModel.MessageText = "Removing distro please wait";
+                        _viewModel.IsIndeterminate = true;   
+                    }
                 }
                 _viewModel.MainWindowViewModel.CanGoBack = true;
                 _viewModel.MainWindowViewModel.DistroBank.DistroDictionary.Remove(distroName);

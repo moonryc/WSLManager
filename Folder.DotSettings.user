@@ -4,6 +4,7 @@
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005Cdotnet_005Cshared_005CMicrosoft_002EWindowsDesktop_002EApp_005C5_002E0_002E8_005CSystem_002EDrawing_002ECommon_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005Cdotnet_005Cshared_005CMicrosoft_002EWindowsDesktop_002EApp_005C5_002E0_002E8_005CSystem_002EWindows_002EForms_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/SweaWarningsMode/@EntryValue">ShowAndRun</s:String>
+	<s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">INFO</s:String>
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="Z:\STANDARD FILES\Desktop\Personal Projects\C#\MVVM WSL MANAGER\Standard MVVM WSLManager - Copy\System.Windows.Forms.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\5.0.0\ref\net5.0\System.Drawing.Common.dll" /&gt;&#xD;

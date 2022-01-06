@@ -71,8 +71,11 @@ namespace WSLManager.Commands.ImportExportRemoveDistro
 
                 while (!exportProcess.HasExited)
                 {
-                    _viewModel.IsIndetermiante = true;
-                    _viewModel.MessageOutput = "Exporting Distro please wait";
+                    if (_viewModel.IsIndetermiante != true)
+                    {
+                        _viewModel.IsIndetermiante = true;
+                        _viewModel.MessageOutput = "Exporting Distro please wait";
+                    }
                 }
                 _viewModel.MainWindowViewModel.CanGoBack = true;
                 _viewModel.IsIndetermiante = !exportProcess.HasExited;

@@ -95,8 +95,11 @@ namespace WSLManager.Commands.ImportExportRemoveDistro
                 
                 while (!importProcess.HasExited)
                 {
-                    _viewModel.IsIndeterminate = true;
-                    _viewModel.MessageOutput = "Importing Distro please wait (this can take some time)";
+                    if(_viewModel.IsIndeterminate != true)
+                    {
+                        _viewModel.IsIndeterminate = true;
+                        _viewModel.MessageOutput = "Importing Distro please wait (this can take some time)";    
+                    }
                 }
                 _viewModel.MainWindowViewModel.CanGoBack = true;
                 _viewModel.MessageOutput = "Distro has been imported";
