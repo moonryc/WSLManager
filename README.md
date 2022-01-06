@@ -14,7 +14,7 @@
 
 ## Installation
 
-To run this program visit this link [here]() or download the most recent release from github. Unzip the folder and run WSLManager.exe.
+To run this program visit this link [here](https://github.com/moonryc/WSLManager/releases) or download the most recent release from github. Unzip the folder and run WSLManager.exe.
 
 ## Usage
 
