@@ -50,7 +50,7 @@ To run this program visit this link [here]() or download the most recent release
 * Login in using a specific user currently does not work
 * After launching the selected distro, the text in the drop down menu does not update properly but the buttons will.
 
-### Upcoming Features
+## Upcoming Features
 * Install Gui packages required for opening the Linux distro in Remote Desktop
 * Note significant progress has been made on the Install GUI packages tool. It is not 100% finished yet but It should be finished within the next week.
 * Open Distro GUI, currently the button is non-functional
